@@ -98,7 +98,8 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("ionRadius"))
             {
-                element.IonRadius = data["ionRadius"].ToString();
+                element.IonRadius = string.IsNullOrWhiteSpace(data["ionRadius"].ToString()) ? null :
+                    data["ionRadius"].ToString();
             }
 
             if (data.ContainsKey("ionizationEnergy"))
