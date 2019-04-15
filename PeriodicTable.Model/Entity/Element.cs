@@ -11,14 +11,14 @@
         public decimal? BoilingPoint { get; set; }
         public decimal? Density { get; set; }
         public int? ElectronAffinity { get; set; }
-        public decimal? ElectronNegativity { get; set; }
+        public decimal? Electronegativity { get; set; }
         public string ElectronicConfiguration { get; set; }
         public GroupBlock GroupBlock { get; set; }
         public string IonRadius { get; set; }
         public decimal? IonizationEnergy { get; set; }
         public string OxidationStates { get; set; }
         public StandardState StandardStates { get; set; }
-        public decimal? VanDerWallsRadius { get; set; }
+        public decimal? VanDerWaalsRadius { get; set; }
         public int? YearDiscovered { get; set; }
     }
 }

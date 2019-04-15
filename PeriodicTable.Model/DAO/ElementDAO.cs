@@ -1,10 +1,14 @@
 ﻿using PeriodicTable.Model.Entity;
+using PeriodicTable.Model.Support;
 using System;
+using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
+using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
 {
@@ -15,11 +19,94 @@ namespace PeriodicTable.Model.DAO
         private GroupBlockDAO GroupBlockDAO = new GroupBlockDAO();
         private StandardStateDAO StandardStateDAO = new StandardStateDAO();
 
-        public Element GetObject(dynamic data)
+        private Element GetObject(ref SQLiteDataReader dr)
+        {
+            var element = new Element()
+            {
+                AtomicMass = Convert.ToDecimal(dr["atomicMass"]),
+                Symbol = dr["symbol"].ToString(),
+                AtomicNumber = Convert.ToInt32(dr["atomicNumber"]),
+                Name = dr["name"].ToString()
+            };
+
+            if (!Convert.IsDBNull(dr["atomicRadius"]))
+            {
+                element.AtomicRadius = Convert.ToInt32(dr["atomicRadius"]);
+            }
+
+            if (!Convert.IsDBNull(dr["meltingPoint"]))
+            {
+                element.MeltingPoint = Convert.ToDecimal(dr["meltingPoint"], CultureInfo.InvariantCulture);
+            }
+
+            if (!Convert.IsDBNull(dr["boilingPoint"]))
+            {
+                element.BoilingPoint = Convert.ToDecimal(dr["boilingPoint"], CultureInfo.InvariantCulture);
+            }
+
+            if (!Convert.IsDBNull(dr["density"]))
+            {
+                element.Density = Convert.ToDecimal(dr["density"], CultureInfo.InvariantCulture);
+            }
+
+            if (!Convert.IsDBNull(dr["electronAffinity"]))
+            {
+                element.ElectronAffinity = Convert.ToInt32(dr["electronAffinity"]);
+            }
+
+            if (!Convert.IsDBNull(dr["electronegativity"]))
+            {
+                element.Electronegativity = Convert.ToDecimal(dr["electronegativity"], CultureInfo.InvariantCulture);
+            }
+
+            if (!Convert.IsDBNull(dr["electronicConfiguration"]))
+            {
+                element.ElectronicConfiguration = dr["electronicConfiguration"].ToString();
+            }
+
+            if (!Convert.IsDBNull(dr["groupBlock"]))
+            {
+                element.GroupBlock = GroupBlockDAO.Select(Convert.ToInt64(dr["groupBlock"]));
+            }
+
+            if (!Convert.IsDBNull(dr["ionRadius"]))
+            {
+                element.IonRadius = dr["ionRadius"].ToString();
+            }
+
+            if (!Convert.IsDBNull(dr["ionizationEnergy"]))
+            {
+                element.IonizationEnergy = Convert.ToDecimal(dr["ionizationEnergy"], CultureInfo.InvariantCulture);
+            }
+
+            if (!Convert.IsDBNull(dr["oxidationStates"]))
+            {
+                element.OxidationStates = dr["oxidationStates"].ToString();
+            }
+
+            if (!Convert.IsDBNull(dr["standardState"]))
+            {
+                element.StandardStates = StandardStateDAO.Select(Convert.ToInt64(dr["standardState"]));
+            }
+
+            if (!Convert.IsDBNull(dr["vanDerWaalsRadius"]))
+            {
+                element.VanDerWaalsRadius = Convert.ToDecimal(dr["vanDerWaalsRadius"], CultureInfo.InvariantCulture);
+            }
+
+            if (!Convert.IsDBNull(dr["yearDiscovered"]))
+            {
+                element.YearDiscovered = Convert.ToInt32(dr["yearDiscovered"]);
+            }
+
+            return element;
+        }
+
+        private Element GetObjectFromJSON(dynamic data)
         {
             if (data.ContainsKey("message"))
             {
-                throw new Exception("Element does not exist!");
+                throw new PeriodicTableException("Element does not exist!");
             }
 
             var element = new Element();
@@ -82,7 +169,7 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("electronegativity"))
             {
-                element.ElectronNegativity = string.IsNullOrWhiteSpace(data["electronegativity"].ToString()) ? null :
+                element.Electronegativity = string.IsNullOrWhiteSpace(data["electronegativity"].ToString()) ? null :
                     Convert.ToDecimal(data["electronegativity"], CultureInfo.InvariantCulture);
             }
 
@@ -93,7 +180,7 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("groupBlock"))
             {
-                element.GroupBlock = GroupBlockDAO.GetObject(data["groupBlock"].ToString());
+                element.GroupBlock = GroupBlockDAO.Select(data["groupBlock"].ToString());
             }
 
             if (data.ContainsKey("ionRadius"))
@@ -115,12 +202,12 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("standardState"))
             {
-                element.StandardStates = StandardStateDAO.GetObject(data["standardState"].ToString());
+                element.StandardStates = StandardStateDAO.Select(data["standardState"].ToString());
             }
 
             if (data.ContainsKey("vanDelWaalsRadius"))
             {
-                element.VanDerWallsRadius = string.IsNullOrWhiteSpace(data["vanDelWaalsRadius"].ToString()) ? null :
+                element.VanDerWaalsRadius = string.IsNullOrWhiteSpace(data["vanDelWaalsRadius"].ToString()) ? null :
                     Convert.ToDecimal(data["vanDelWaalsRadius"], CultureInfo.InvariantCulture);
             }
 
@@ -130,6 +217,77 @@ namespace PeriodicTable.Model.DAO
             }
 
             return element;
+        }
+
+        public void Save(Element element)
+        {
+            var sql = "SELECT * " +
+                        "FROM element " +
+                        "WHERE atomicNumber = @1";
+            var dr = con.Select(sql, new List<object> { element.AtomicNumber });
+            if (dr.HasRows)
+            {
+                sql = "UPDATE element SET " +
+                          "atomicMass = @2, " +
+                          "symbol = @3, " +
+                          "name = @4, " +
+                          "atomicRadius = @5, " +
+                          "meltingPoint = @6, " +
+                          "boilingPoint = @7, " +
+                          "density = @8, " +
+                          "electronAffinity = @9, " +
+                          "electronegativity = @10, " +
+                          "electronicConfiguration = @11, " +
+                          "groupBlock = @12, " +
+                          "ionRadius = @13, " +
+                          "ionizationEnergy = @14, " +
+                          "oxidationStates = @15, " +
+                          "standardState = @16, " +
+                          "vanDerWaalsRadius = @17, " +
+                          "yearDiscovered = @18 " +
+                        "WHERE atomicNumber = @1";
+                dr.Close();
+            }
+            else
+            {
+                sql = "INSERT INTO element " +
+                          "(atomicMass, symbol, atomicNumber, name, atomicRadius, meltingPoint, boilingPoint, density, electronAffinity, electronegativity, electronicConfiguration, groupBlock, ionRadius, ionizationEnergy, oxidationStates, standardState, vanDerWaalsRadius, yearDiscovered) " +
+                        "VALUES " +
+                          "(@1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18)";
+            }
+
+            con.Run(sql, new List<object>
+            {
+                element.AtomicMass,
+                element.Symbol,
+                element.AtomicNumber,
+                element.Name,
+                element.AtomicRadius,
+                element.MeltingPoint,
+                element.BoilingPoint,
+                element.Density,
+                element.ElectronAffinity,
+                element.Electronegativity,
+                element.ElectronicConfiguration,
+                element.GroupBlock.Id,
+                element.IonRadius,
+                element.IonizationEnergy,
+                element.OxidationStates,
+                element.StandardStates.Id,
+                element.VanDerWaalsRadius,
+                element.YearDiscovered
+            });
+        }
+
+        public void UpdateFromAPI()
+        {
+            var url = $"https://neelpatel05.pythonanywhere.com/";
+            dynamic data = serializer.DeserializeObject(Get(url));
+            foreach (dynamic innerData in data)
+            {
+                Element element = GetObjectFromJSON(innerData);
+                Save(element);
+            }
         }
 
         private string Get(string url)
@@ -146,40 +304,45 @@ namespace PeriodicTable.Model.DAO
                     return reader.ReadToEnd();
                 }
             }
-            catch (WebException ex)
+            catch (WebException)
             {
-                WebResponse errorResponse = ex.Response;
-                using (Stream responseStream = errorResponse.GetResponseStream())
-                {
-                    StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.GetEncoding("utf-8"));
-                    string errorText = reader.ReadToEnd();
-                    // log errorText
-                }
-
-                throw new Exception("Unable to get information from the server");
+                throw new WebException("Unable to get information from the server");
             }
         }
 
-        public Element ByNumber(int atomicNumber)
+        public Element Select(int atomicNumber)
         {
-            var url = $"https://neelpatel05.pythonanywhere.com/element/atomicnumber?atomicnumber={atomicNumber}";
-            dynamic data = serializer.DeserializeObject(Get(url));
-
-            return GetObject(data);
-        }
-
-        public Element BySymbol(string symbol)
-        {
-            var url = $"https://neelpatel05.pythonanywhere.com/element/symbol?symbol={symbol}";
-            dynamic data = serializer.DeserializeObject(Get(url));
-
-            if (data.ContainsKey("message"))
+            Element element = null;
+            var sql = "SELECT * " +
+                        "FROM element " +
+                        "WHERE atomicNumber = @1";
+            var dr = con.Select(sql, new List<object> { atomicNumber });
+            if (dr.HasRows)
             {
-                url = $"https://neelpatel05.pythonanywhere.com/element/atomicname?atomicname={symbol}";
-                data = serializer.DeserializeObject(Get(url));
+                dr.Read();
+                element = GetObject(ref dr);
+                dr.Close();
             }
 
-            return GetObject(data);
+            return element;
+        }
+
+        public Element Select(string symbol)
+        {
+            Element element = null;
+            var sql = "SELECT * " +
+                        "FROM element " +
+                        "WHERE symbol = @1 " +
+                          "OR name = @1";
+            var dr = con.Select(sql, new List<object> { symbol });
+            if (dr.HasRows)
+            {
+                dr.Read();
+                element = GetObject(ref dr);
+                dr.Close();
+            }
+
+            return element;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace PeriodicTable.Model.Entity
 {
     public class GroupBlock
     {
+        public long Id { get; set; }
         public string Name { get; set; }
     }
 }

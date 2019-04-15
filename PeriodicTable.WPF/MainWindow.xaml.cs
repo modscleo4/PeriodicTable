@@ -2,6 +2,8 @@
 using PeriodicTable.Model.DAO;
 using System;
 using System.Windows;
+using PeriodicTable.Model.Support;
+using System.Net;
 
 namespace PeriodicTable
 {
@@ -66,9 +68,9 @@ namespace PeriodicTable
                 LabelElectronAffinity.Text = element.ElectronAffinity.ToString() + " kJ mol⁻¹";
             }
 
-            if (element.ElectronNegativity != null)
+            if (element.Electronegativity != null)
             {
-                LabelElectronNegativity.Text = element.ElectronNegativity.ToString();
+                LabelElectronNegativity.Text = element.Electronegativity.ToString();
             }
 
             if (element.ElectronicConfiguration != null)
@@ -101,9 +103,9 @@ namespace PeriodicTable
                 LabelStandardStates.Text = element.StandardStates.Value;
             }
 
-            if (element.VanDerWallsRadius != null)
+            if (element.VanDerWaalsRadius != null)
             {
-                LabelVanDerWallsRadius.Text = element.VanDerWallsRadius.ToString() + " pm";
+                LabelVanDerWallsRadius.Text = element.VanDerWaalsRadius.ToString() + " pm";
             }
 
             if (element.YearDiscovered != null)
@@ -144,29 +146,31 @@ namespace PeriodicTable
             var element = SearchboxValue;
             Clear();
 
-            if (int.TryParse(element, out int n))
+            try
             {
-                try
+                if (int.TryParse(element, out int n))
                 {
-                    this.element = ElementDAO.ByNumber(n);
-                    LoadElement();
+                    this.element = ElementDAO.Select(n);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Modscleo4.WPFUI.MessageBox.Show(ex.Message, "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    this.element = ElementDAO.Select(element);
                 }
+
+                if (this.element == null)
+                {
+                    throw new PeriodicTableException("Element does not exist!");
+                }
+
+                LoadElement();
             }
-            else
+            catch (PeriodicTableException ex)
             {
-                try
-                {
-                    this.element = ElementDAO.BySymbol(element);
-                    LoadElement();
-                }
-                catch (Exception ex)
-                {
-                    Modscleo4.WPFUI.MessageBox.Show(ex.Message, "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                Modscleo4.WPFUI.MessageBox.Show(ex.Message, "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            catch (Exception ex)
+            {
+                Modscleo4.WPFUI.MessageBox.Show(string.Format("A unexpected exception occourred! Details: {0}", ex.Message), "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -174,13 +178,13 @@ namespace PeriodicTable
         {
             try
             {
-                ElementDAO.ByNumber(1);
+                ElementDAO.UpdateFromAPI();
                 Clear();
             }
-            catch (Exception)
+            catch (WebException)
             {
-                Modscleo4.WPFUI.MessageBox.Show("Unable to get information from server!", "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                Environment.Exit(0);
+                Modscleo4.WPFUI.MessageBox.Show("Unable to get information from server! Using from cached.", "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                //Environment.Exit(0);
             }
         }
     }
