@@ -1,0 +1,40 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PeriodicTable.WPF"
+    xmlns:controls="clr-namespace:PeriodicTable.WPF.Controls">
+
+
+    <Style TargetType="{x:Type controls:GridElement}">
+        <Setter Property="BorderBrush" Value="#FFA4CAEC" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="#01000000" />
+        <Setter Property="Cursor" Value="Hand" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:GridElement}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock x:Name="LabelNumber" Foreground="#FFD5D5D5" Grid.Row="0" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Top" Text="{TemplateBinding AtomicNumber}" />
+                            <TextBlock x:Name="LabelSymbol" Foreground="#FFD5D5D5" Grid.Row="1" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{TemplateBinding Symbol}" />
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#0FFFFFFF" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -128,8 +128,7 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("atomicNumber"))
             {
-                element.AtomicNumber = string.IsNullOrWhiteSpace(data["atomicNumber"].ToString()) ? null :
-                    Convert.ToInt32(data["atomicNumber"]);
+                element.AtomicNumber = Convert.ToInt32(data["atomicNumber"]);
             }
 
             if (data.ContainsKey("name"))
@@ -308,6 +307,21 @@ namespace PeriodicTable.Model.DAO
             {
                 throw new WebException("Unable to get information from the server");
             }
+        }
+
+        public List<Element> Select()
+        {
+            var elements = new List<Element>();
+            var sql = "SELECT * " +
+                        "FROM element";
+            var dr = con.Select(sql);
+            while (dr.Read())
+            {
+                elements.Add(GetObject(ref dr));
+            }
+            dr.Close();
+
+            return elements;
         }
 
         public Element Select(int atomicNumber)

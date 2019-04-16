@@ -1,19 +1,27 @@
-﻿using PeriodicTable.Model.Entity;
-using PeriodicTable.Model.DAO;
+﻿using PeriodicTable.Model.DAO;
+using PeriodicTable.WPF.Controls;
 using System;
-using System.Windows;
-using PeriodicTable.Model.Support;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
-namespace PeriodicTable
+namespace PeriodicTable.WPF
 {
     /// <summary>
-    /// Interação lógica para MainWindow.xaml
+    /// Lógica interna para MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Modscleo4.WPFUI.Controls.Window
     {
-        private Element element;
-
         private ElementDAO ElementDAO = new ElementDAO();
 
         public MainWindow()
@@ -21,157 +29,51 @@ namespace PeriodicTable
             InitializeComponent();
         }
 
-        private void LoadElement()
+        private int GetPeriod(int numberOfElectrons)
         {
-            if (element.AtomicMass != null)
+            int period = 1;
+            if (numberOfElectrons > 2)
             {
-                LabelMass.Text = element.AtomicMass.ToString();
+                numberOfElectrons -= 2;
+                period++;
             }
 
-            if (element.Symbol != null)
+            if (numberOfElectrons > 8)
             {
-                LabelSymbol.Text = element.Symbol;
+                numberOfElectrons -= 8;
+                period++;
             }
 
-            if (element.AtomicNumber != null)
+            if (numberOfElectrons > 8)
             {
-                LabelNumber.Text = element.AtomicNumber.ToString();
+                numberOfElectrons -= 8;
+                period++;
             }
 
-            if (element.Name != null)
+            if (numberOfElectrons > 18)
             {
-                LabelName.Text = element.Name;
+                numberOfElectrons -= 18;
+                period++;
             }
 
-            if (element.AtomicRadius != null)
+            if (numberOfElectrons > 18)
             {
-                LabelAtomicRadius.Text = element.AtomicRadius.ToString();
+                numberOfElectrons -= 18;
+                period++;
             }
 
-            if (element.MeltingPoint != null)
+            if (numberOfElectrons > 32)
             {
-                LabelMeltingPoint.Text = element.MeltingPoint.ToString() + " K";
+                numberOfElectrons -= 32;
+                period++;
             }
 
-            if (element.BoilingPoint != null)
+            if (numberOfElectrons > 32)
             {
-                LabelBoilingPoint.Text = element.BoilingPoint.ToString() + " K";
+                period++;
             }
 
-            if (element.Density != null)
-            {
-                LabelDensity.Text = element.Density.ToString() + " g/cm³";
-            }
-
-            if (element.ElectronAffinity != null)
-            {
-                LabelElectronAffinity.Text = element.ElectronAffinity.ToString() + " kJ mol⁻¹";
-            }
-
-            if (element.Electronegativity != null)
-            {
-                LabelElectronNegativity.Text = element.Electronegativity.ToString();
-            }
-
-            if (element.ElectronicConfiguration != null)
-            {
-                LabelElectronicConfiguration.Text = element.ElectronicConfiguration;
-            }
-
-            if (element.GroupBlock != null)
-            {
-                LabelGroupBlock.Text = element.GroupBlock.Name;
-            }
-
-            if (element.IonRadius != null)
-            {
-                LabelIonRadius.Text = element.IonRadius + " pm";
-            }
-
-            if (element.IonizationEnergy != null)
-            {
-                LabelIonizationEnergy.Text = element.IonizationEnergy.ToString() + " kJ mol⁻¹";
-            }
-
-            if (element.OxidationStates != null)
-            {
-                LabelOxidationStates.Text = element.OxidationStates;
-            }
-
-            if (element.StandardStates != null)
-            {
-                LabelStandardStates.Text = element.StandardStates.Value;
-            }
-
-            if (element.VanDerWaalsRadius != null)
-            {
-                LabelVanDerWallsRadius.Text = element.VanDerWaalsRadius.ToString() + " pm";
-            }
-
-            if (element.YearDiscovered != null)
-            {
-                LabelYearDiscovered.Text = element.YearDiscovered.ToString();
-            }
-            else
-            {
-                LabelYearDiscovered.Text = "Ancient";
-            }
-        }
-
-        private void Clear()
-        {
-            LabelMass.Text = "Mass";
-            LabelSymbol.Text = "Symbol";
-            LabelNumber.Text = "Number";
-
-            LabelName.Text = String.Empty;
-            LabelAtomicRadius.Text = String.Empty;
-            LabelMeltingPoint.Text = String.Empty;
-            LabelBoilingPoint.Text = String.Empty;
-            LabelDensity.Text = String.Empty;
-            LabelElectronAffinity.Text = String.Empty;
-            LabelElectronNegativity.Text = String.Empty;
-            LabelElectronicConfiguration.Text = String.Empty;
-            LabelGroupBlock.Text = String.Empty;
-            LabelIonRadius.Text = String.Empty;
-            LabelIonizationEnergy.Text = String.Empty;
-            LabelOxidationStates.Text = String.Empty;
-            LabelStandardStates.Text = String.Empty;
-            LabelVanDerWallsRadius.Text = String.Empty;
-            LabelYearDiscovered.Text = String.Empty;
-        }
-
-        private void Window_Search(object sender, RoutedEventArgs e)
-        {
-            var element = SearchboxValue;
-            Clear();
-
-            try
-            {
-                if (int.TryParse(element, out int n))
-                {
-                    this.element = ElementDAO.Select(n);
-                }
-                else
-                {
-                    this.element = ElementDAO.Select(element);
-                }
-
-                if (this.element == null)
-                {
-                    throw new PeriodicTableException("Element does not exist!");
-                }
-
-                LoadElement();
-            }
-            catch (PeriodicTableException ex)
-            {
-                Modscleo4.WPFUI.MessageBox.Show(ex.Message, "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            catch (Exception ex)
-            {
-                Modscleo4.WPFUI.MessageBox.Show(string.Format("A unexpected exception occourred! Details: {0}", ex.Message), "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
+            return period;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -179,12 +81,108 @@ namespace PeriodicTable
             try
             {
                 ElementDAO.UpdateFromAPI();
-                Clear();
             }
             catch (WebException)
             {
                 Modscleo4.WPFUI.MessageBox.Show("Unable to get information from server! Using from cached.", "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                //Environment.Exit(0);
+            }
+
+            var elements = ElementDAO.Select();
+            foreach (var element in elements)
+            {
+                var gridElement = new GridElement();
+
+                gridElement.AtomicNumber = element.AtomicNumber.ToString();
+                gridElement.Symbol = element.Symbol;
+
+                var column = element.AtomicNumber;
+                var row = GetPeriod(element.AtomicNumber);
+
+                if (row == 1)
+                {
+                    if (element.AtomicNumber >= 2)
+                    {
+                        // Helium (2) is at column 18 (17 in the grid)
+                        column += 17;
+                    }
+                }
+                else if (row == 2)
+                {
+                    // The last element before row 2 was Helium (2)
+                    column -= 2;
+                    if (column > 2)
+                    {
+                        // Borum (5) is at column 13 (12 in the grid)
+                        column += 10;
+                    }
+                }
+                else if (row == 3)
+                {
+                    // The last element before row 2 was Neonium (10)
+                    column -= 10;
+                    if (column > 2)
+                    {
+                        // Alluminum (13) is at column 13 (12 in the grid)
+                        column += 10;
+                    }
+                }
+                else if (row == 4)
+                {
+                    // The last element before row 3 was Argon (18)
+                    column -= 18;
+                }
+                else if (row == 5)
+                {
+                    // The last element before row 2 was Krypton (36)
+                    column -= 36;
+                }
+                else if (row == 6)
+                {
+                    // The last element before row 2 was Xenon (54)
+                    column -= 54;
+
+                    if (column > 2)
+                    {
+                        // Lanthanoids start at column 3 (2 in the grid)
+                        if (column <= 17)
+                        {
+                            // Lanthanoids is at row 8
+                            row = 9;
+                            column += 1;
+                        }
+                        else
+                        {
+                            // Bring the elements 14 columns back (removed all the lanthanoids)
+                            column -= 14;
+                        }
+                    }
+                }
+                else if (row == 7)
+                {
+                    // The last element before row 2 was Radon (54)
+                    column -= 86;
+
+                    if (column > 2)
+                    {
+                        // Actinoids start at column 3 (2 in the grid)
+                        if (column <= 17)
+                        {
+                            // Actinoids is at row 9
+                            row = 10;
+                            column += 1;
+                        }
+                        else
+                        {
+                            // Bring the elements 14 columns back (removed all the actinoids)
+                            column -= 14;
+                        }
+                    }
+                }
+
+                Grid.SetRow(gridElement, row - 1);
+                Grid.SetColumn(gridElement, column - 1);
+
+                ElementsGrid.Children.Add(gridElement);
             }
         }
     }

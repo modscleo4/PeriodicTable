@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PeriodicTable
+namespace PeriodicTable.WPF
 {
     /// <summary>
     /// Interação lógica para App.xaml
