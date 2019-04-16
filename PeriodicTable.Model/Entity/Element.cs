@@ -2,9 +2,9 @@
 {
     public class Element
     {
-        public decimal? AtomicMass { get; set; }
-        public string Symbol { get; set; }
         public uint AtomicNumber { get; set; }
+        public string Symbol { get; set; }
+        public decimal AtomicMass { get; set; }
         public string Name { get; set; }
         public int? AtomicRadius { get; set; }
         public decimal? MeltingPoint { get; set; }
@@ -17,7 +17,7 @@
         public string IonRadius { get; set; }
         public decimal? IonizationEnergy { get; set; }
         public string OxidationStates { get; set; }
-        public StandardState StandardStates { get; set; }
+        public StandardState StandardState { get; set; }
         public decimal? VanDerWaalsRadius { get; set; }
         public int? YearDiscovered { get; set; }
     }

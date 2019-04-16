@@ -52,19 +52,16 @@ namespace PeriodicTable.WPF
             ElementBorder.BorderBrush = new SolidColorBrush(element.GroupBlock.Color);
 
             LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
-            Title = $"{((element.Name != null) ? element.Name : "Element")} - Periodic Table";
+            Title = $"{(element.Name ?? "Element")} - Periodic Table";
 
-            if (element.AtomicMass != null)
-            {
-                LabelMass.Text = element.AtomicMass.ToString();
-            }
+            LabelNumber.Text = element.AtomicNumber.ToString();
 
             if (element.Symbol != null)
             {
                 LabelSymbol.Text = element.Symbol;
             }
 
-            LabelNumber.Text = element.AtomicNumber.ToString();
+            LabelMass.Text = element.AtomicMass.ToString();
 
             if (element.Name != null)
             {
@@ -126,9 +123,9 @@ namespace PeriodicTable.WPF
                 LabelOxidationStates.Text = element.OxidationStates;
             }
 
-            if (element.StandardStates != null)
+            if (element.StandardState != null)
             {
-                LabelStandardStates.Text = element.StandardStates.Value;
+                LabelStandardStates.Text = element.StandardState.Value;
             }
 
             if (element.VanDerWaalsRadius != null)
@@ -151,11 +148,12 @@ namespace PeriodicTable.WPF
             Title = "Element - Periodic Table";
 
             LabelGP.Text = "P, G";
-            LabelMass.Text = "Mass";
-            LabelSymbol.Text = "Symbol";
-            LabelNumber.Text = "Number";
 
-            LabelName.Text = string.Empty;
+            LabelNumber.Text = "Number";
+            LabelSymbol.Text = "Symbol";
+            LabelName.Text = "Name";
+            LabelMass.Text = "Mass";
+
             LabelAtomicRadius.Text = string.Empty;
             LabelMeltingPoint.Text = string.Empty;
             LabelBoilingPoint.Text = string.Empty;

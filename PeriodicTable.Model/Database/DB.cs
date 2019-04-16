@@ -25,9 +25,9 @@ namespace PeriodicTable.Model.Database
             con.Run(sql);
 
             sql = "CREATE TABLE IF NOT EXISTS element (" +
-                         "atomicMass REAL, " +
-                          "symbol TEXT, " +
                           "atomicNumber INTEGER NOT NULL, " +
+                          "symbol TEXT, " +
+                          "atomicMass REAL, " +
                           "name TEXT, " +
                           "atomicRadius INTEGER, " +
                           "meltingPoint REAL, " +

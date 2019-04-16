@@ -23,9 +23,9 @@ namespace PeriodicTable.Model.DAO
         {
             var element = new Element()
             {
-                AtomicMass = Convert.ToDecimal(dr["atomicMass"]),
-                Symbol = dr["symbol"].ToString(),
                 AtomicNumber = Convert.ToUInt32(dr["atomicNumber"]),
+                Symbol = dr["symbol"].ToString(),
+                AtomicMass = Convert.ToDecimal(dr["atomicMass"]),
                 Name = dr["name"].ToString()
             };
 
@@ -86,7 +86,7 @@ namespace PeriodicTable.Model.DAO
 
             if (!Convert.IsDBNull(dr["standardState"]))
             {
-                element.StandardStates = StandardStateDAO.Select(Convert.ToInt64(dr["standardState"]));
+                element.StandardState = StandardStateDAO.Select(Convert.ToInt64(dr["standardState"]));
             }
 
             if (!Convert.IsDBNull(dr["vanDerWaalsRadius"]))
@@ -110,6 +110,17 @@ namespace PeriodicTable.Model.DAO
             }
 
             var element = new Element();
+
+            if (data.ContainsKey("atomicNumber"))
+            {
+                element.AtomicNumber = Convert.ToUInt32(data["atomicNumber"]);
+            }
+
+            if (data.ContainsKey("symbol"))
+            {
+                element.Symbol = data["symbol"].ToString();
+            }
+
             if (data.ContainsKey("atomicMass"))
             {
                 if (data["atomicMass"].GetType().IsArray)
@@ -119,16 +130,6 @@ namespace PeriodicTable.Model.DAO
 
                 element.AtomicMass = string.IsNullOrWhiteSpace(data["atomicMass"].ToString()) ? null :
                     Convert.ToDecimal(Regex.Replace(data["atomicMass"].ToString(), @"\(.*\)", ""), CultureInfo.InvariantCulture);
-            }
-
-            if (data.ContainsKey("symbol"))
-            {
-                element.Symbol = data["symbol"].ToString();
-            }
-
-            if (data.ContainsKey("atomicNumber"))
-            {
-                element.AtomicNumber = Convert.ToUInt32(data["atomicNumber"]);
             }
 
             if (data.ContainsKey("name"))
@@ -201,7 +202,7 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("standardState"))
             {
-                element.StandardStates = StandardStateDAO.Select(data["standardState"].ToString());
+                element.StandardState = StandardStateDAO.Select(data["standardState"].ToString());
             }
 
             if (data.ContainsKey("vanDelWaalsRadius"))
@@ -224,11 +225,12 @@ namespace PeriodicTable.Model.DAO
                         "FROM element " +
                         "WHERE atomicNumber = @1";
             var dr = con.Select(sql, new List<object> { element.AtomicNumber });
+
             if (dr.HasRows)
             {
                 sql = "UPDATE element SET " +
-                          "atomicMass = @2, " +
-                          "symbol = @3, " +
+                          "symbol = @2, " +
+                          "atomicMass = @3, " +
                           "name = @4, " +
                           "atomicRadius = @5, " +
                           "meltingPoint = @6, " +
@@ -250,16 +252,16 @@ namespace PeriodicTable.Model.DAO
             else
             {
                 sql = "INSERT INTO element " +
-                          "(atomicMass, symbol, atomicNumber, name, atomicRadius, meltingPoint, boilingPoint, density, electronAffinity, electronegativity, electronicConfiguration, groupBlock, ionRadius, ionizationEnergy, oxidationStates, standardState, vanDerWaalsRadius, yearDiscovered) " +
+                          "(atomicNumber, symbol, atomicMass, name, atomicRadius, meltingPoint, boilingPoint, density, electronAffinity, electronegativity, electronicConfiguration, groupBlock, ionRadius, ionizationEnergy, oxidationStates, standardState, vanDerWaalsRadius, yearDiscovered) " +
                         "VALUES " +
                           "(@1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18)";
             }
 
             con.Run(sql, new List<object>
             {
-                element.AtomicMass,
-                element.Symbol,
                 element.AtomicNumber,
+                element.Symbol,
+                element.AtomicMass,
                 element.Name,
                 element.AtomicRadius,
                 element.MeltingPoint,
@@ -272,7 +274,7 @@ namespace PeriodicTable.Model.DAO
                 element.IonRadius,
                 element.IonizationEnergy,
                 element.OxidationStates,
-                element.StandardStates.Id,
+                element.StandardState.Id,
                 element.VanDerWaalsRadius,
                 element.YearDiscovered
             });
