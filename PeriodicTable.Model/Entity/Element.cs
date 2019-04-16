@@ -4,7 +4,7 @@
     {
         public decimal? AtomicMass { get; set; }
         public string Symbol { get; set; }
-        public int AtomicNumber { get; set; }
+        public uint AtomicNumber { get; set; }
         public string Name { get; set; }
         public int? AtomicRadius { get; set; }
         public decimal? MeltingPoint { get; set; }

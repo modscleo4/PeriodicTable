@@ -1,9 +1,9 @@
-﻿using static PeriodicTable.Model.Database.DB;
-using PeriodicTable.Model.Entity;
+﻿using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
-using System.Data.SQLite;
 using System.Collections.Generic;
+using System.Data.SQLite;
+using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
 {
@@ -65,7 +65,7 @@ namespace PeriodicTable.Model.DAO
                         "FROM standardState " +
                         "WHERE value = @1";
             var dr = con.Select(sql, new List<object> { value });
-            
+
             if (dr.HasRows)
             {
                 dr.Read();

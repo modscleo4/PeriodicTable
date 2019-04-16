@@ -97,6 +97,7 @@
     <Compile Include="DAO\StandardStateDAO.cs" />
     <Compile Include="Support\Common.cs" />
     <Compile Include="Support\PeriodicTableException.cs" />
+    <Compile Include="Support\PeriodicTableUtils.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

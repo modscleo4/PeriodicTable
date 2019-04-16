@@ -7,9 +7,10 @@
 
     <Style TargetType="{x:Type controls:GridElement}">
         <Setter Property="BorderBrush" Value="#FFA4CAEC" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="2" />
         <Setter Property="Background" Value="#01000000" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Margin" Value="1" />
 
         <Setter Property="Template">
             <Setter.Value>

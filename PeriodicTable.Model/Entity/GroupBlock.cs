@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows.Media;
 
 namespace PeriodicTable.Model.Entity
 {
@@ -10,5 +6,6 @@ namespace PeriodicTable.Model.Entity
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public Color Color { get; set; }
     }
 }

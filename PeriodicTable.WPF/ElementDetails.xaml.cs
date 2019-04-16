@@ -1,9 +1,9 @@
-﻿using PeriodicTable.Model.Entity;
-using PeriodicTable.Model.DAO;
+﻿using PeriodicTable.Model.DAO;
+using PeriodicTable.Model.Entity;
+using PeriodicTable.Model.Support;
 using System;
 using System.Windows;
-using PeriodicTable.Model.Support;
-using System.Net;
+using System.Windows.Media;
 
 namespace PeriodicTable.WPF
 {
@@ -15,6 +15,7 @@ namespace PeriodicTable.WPF
         private Element element;
 
         private ElementDAO ElementDAO = new ElementDAO();
+        private PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
 
         public ElementDetails()
         {
@@ -48,6 +49,9 @@ namespace PeriodicTable.WPF
 
         private void LoadElement()
         {
+            ElementBorder.BorderBrush = new SolidColorBrush(element.GroupBlock.Color);
+            LabelGP.Text = string.Format("{0}, {1}", PeriodicTableUtils.GetPeriod(element.AtomicNumber), PeriodicTableUtils.GetGroup(element.AtomicNumber));
+
             if (element.AtomicMass != null)
             {
                 LabelMass.Text = element.AtomicMass.ToString();
@@ -58,10 +62,7 @@ namespace PeriodicTable.WPF
                 LabelSymbol.Text = element.Symbol;
             }
 
-            if (element.AtomicNumber != null)
-            {
-                LabelNumber.Text = element.AtomicNumber.ToString();
-            }
+            LabelNumber.Text = element.AtomicNumber.ToString();
 
             if (element.Name != null)
             {
@@ -145,25 +146,26 @@ namespace PeriodicTable.WPF
 
         private void Clear()
         {
+            LabelGP.Text = "P, G";
             LabelMass.Text = "Mass";
             LabelSymbol.Text = "Symbol";
             LabelNumber.Text = "Number";
 
-            LabelName.Text = String.Empty;
-            LabelAtomicRadius.Text = String.Empty;
-            LabelMeltingPoint.Text = String.Empty;
-            LabelBoilingPoint.Text = String.Empty;
-            LabelDensity.Text = String.Empty;
-            LabelElectronAffinity.Text = String.Empty;
-            LabelElectronegativity.Text = String.Empty;
-            LabelElectronicConfiguration.Text = String.Empty;
-            LabelGroupBlock.Text = String.Empty;
-            LabelIonRadius.Text = String.Empty;
-            LabelIonizationEnergy.Text = String.Empty;
-            LabelOxidationStates.Text = String.Empty;
-            LabelStandardStates.Text = String.Empty;
-            LabelVanDerWallsRadius.Text = String.Empty;
-            LabelYearDiscovered.Text = String.Empty;
+            LabelName.Text = string.Empty;
+            LabelAtomicRadius.Text = string.Empty;
+            LabelMeltingPoint.Text = string.Empty;
+            LabelBoilingPoint.Text = string.Empty;
+            LabelDensity.Text = string.Empty;
+            LabelElectronAffinity.Text = string.Empty;
+            LabelElectronegativity.Text = string.Empty;
+            LabelElectronicConfiguration.Text = string.Empty;
+            LabelGroupBlock.Text = string.Empty;
+            LabelIonRadius.Text = string.Empty;
+            LabelIonizationEnergy.Text = string.Empty;
+            LabelOxidationStates.Text = string.Empty;
+            LabelStandardStates.Text = string.Empty;
+            LabelVanDerWallsRadius.Text = string.Empty;
+            LabelYearDiscovered.Text = string.Empty;
         }
 
         private void Window_Search(object sender, RoutedEventArgs e)

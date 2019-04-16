@@ -25,7 +25,7 @@ namespace PeriodicTable.Model.DAO
             {
                 AtomicMass = Convert.ToDecimal(dr["atomicMass"]),
                 Symbol = dr["symbol"].ToString(),
-                AtomicNumber = Convert.ToInt32(dr["atomicNumber"]),
+                AtomicNumber = Convert.ToUInt32(dr["atomicNumber"]),
                 Name = dr["name"].ToString()
             };
 
@@ -128,7 +128,7 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("atomicNumber"))
             {
-                element.AtomicNumber = Convert.ToInt32(data["atomicNumber"]);
+                element.AtomicNumber = Convert.ToUInt32(data["atomicNumber"]);
             }
 
             if (data.ContainsKey("name"))

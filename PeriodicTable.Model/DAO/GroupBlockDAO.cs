@@ -3,6 +3,7 @@ using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Windows.Media;
 using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
@@ -16,6 +17,53 @@ namespace PeriodicTable.Model.DAO
                 Id = Convert.ToInt64(dr["rowid"]),
                 Name = dr["name"].ToString()
             };
+
+            switch (groupBlock.Name)
+            {
+                case "Nonmetal":
+                    groupBlock.Color = Color.FromArgb(255, 160, 255, 160);
+                    break;
+
+                case "Halogen":
+                    groupBlock.Color = Color.FromArgb(255, 255, 255, 153);
+                    break;
+
+                case "Noble Gas":
+                    groupBlock.Color = Color.FromArgb(255, 192, 255, 255);
+                    break;
+
+                case "Alkali Metal":
+                    groupBlock.Color = Color.FromArgb(255, 255, 102, 102);
+                    break;
+
+                case "Alkaline Earth Metal":
+                    groupBlock.Color = Color.FromArgb(255, 255, 222, 173);
+                    break;
+
+                case "Transition Metal":
+                    groupBlock.Color = Color.FromArgb(255, 255, 192, 192);
+                    break;
+
+                case "Metal":
+                    groupBlock.Color = Color.FromArgb(255, 204, 204, 204);
+                    break;
+
+                case "Metalloid":
+                    groupBlock.Color = Color.FromArgb(255, 204, 204, 153);
+                    break;
+
+                case "Post-Transition Metal":
+                    groupBlock.Color = Color.FromArgb(255, 232, 232, 232);
+                    break;
+
+                case "Lanthanoid":
+                    groupBlock.Color = Color.FromArgb(255, 255, 191, 255);
+                    break;
+
+                case "Actinoid":
+                    groupBlock.Color = Color.FromArgb(255, 255, 153, 204);
+                    break;
+            }
 
             return groupBlock;
         }
