@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PeriodicTable.WPF"
         xmlns:controls="clr-namespace:Modscleo4.WPFUI.Controls;assembly=WPFUI"
         mc:Ignorable="d"
-        Title="Main Window" Height="576" MinHeight="576" Width="1024" MinWidth="1024" Loaded="Window_Loaded" ResizeMode="CanResize">
+        Title="Main Window - Periodic Table" Height="576" MinHeight="576" Width="1024" MinWidth="1024" Loaded="Window_Loaded" ResizeMode="CanResize">
     <Grid>
         <Grid x:Name="ElementsGrid" Margin="5">
             <Grid.ColumnDefinitions>

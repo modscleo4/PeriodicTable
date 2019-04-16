@@ -26,8 +26,7 @@ namespace PeriodicTable.Model.Database
         /// <param name="dataSource">Localização do .db</param>
         public Connection(string dataSource)
         {
-            connectionString = String.Format("Data Source={0};",
-                                             dataSource.Trim());
+            connectionString = $"Data Source={dataSource.Trim()};";
         }
 
         /// <summary>
@@ -100,7 +99,7 @@ namespace PeriodicTable.Model.Database
                 var i = 1;
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.AddWithValue(String.Format("@{0}", i++), parameter);
+                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
                 }
                 var r = cmd.ExecuteNonQuery();
 
@@ -154,7 +153,7 @@ namespace PeriodicTable.Model.Database
                 var i = 1;
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.AddWithValue(String.Format("@{0}", i++), parameter);
+                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
                 }
                 return cmd.ExecuteReader(CommandBehavior.CloseConnection);
             }
@@ -209,7 +208,7 @@ namespace PeriodicTable.Model.Database
                 var i = 1;
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.AddWithValue(String.Format("@{0}", i++), parameter);
+                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
                 }
 
                 var da = new SQLiteDataAdapter(cmd);
@@ -269,7 +268,7 @@ namespace PeriodicTable.Model.Database
                 var i = 1;
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.AddWithValue(String.Format("@{0}", i++), parameter);
+                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
                 }
 
                 var da = new SQLiteDataAdapter(cmd);
@@ -304,15 +303,15 @@ namespace PeriodicTable.Model.Database
                 orderBy = orderBy.Trim();
 
                 var ds = new DataSet();
-                var sql = String.Format("SELECT {0} FROM {1} ", fields, table);
+                var sql = $"SELECT {fields} FROM {table} ";
                 if (where != "")
                 {
-                    sql = String.Format("{0} WHERE {1} ", sql, where);
+                    sql = $"{sql} WHERE {where} ";
                 }
 
                 if (orderBy != "")
                 {
-                    sql = String.Format("{0} ORDER BY {1} ", sql, orderBy);
+                    sql = $"{sql} ORDER BY {orderBy} ";
                 }
 
                 var cmd = new SQLiteCommand(sql, con);
@@ -329,7 +328,7 @@ namespace PeriodicTable.Model.Database
         }
 
         /// <summary>
-        /// Obtém os dados da conexão em String
+        /// Obtém os dados da conexão em string
         /// </summary>
         /// <returns>Retorna os dados da conexão</returns>
         override public string ToString()

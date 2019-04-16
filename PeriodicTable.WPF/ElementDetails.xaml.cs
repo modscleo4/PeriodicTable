@@ -43,14 +43,16 @@ namespace PeriodicTable.WPF
             }
             catch (Exception ex)
             {
-                Modscleo4.WPFUI.MessageBox.Show(string.Format("A unexpected exception occourred! Details: {0}", ex.Message), "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Modscleo4.WPFUI.MessageBox.Show($"A unexpected exception occourred! Details: {ex.Message}", "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
         private void LoadElement()
         {
             ElementBorder.BorderBrush = new SolidColorBrush(element.GroupBlock.Color);
-            LabelGP.Text = string.Format("{0}, {1}", PeriodicTableUtils.GetPeriod(element.AtomicNumber), PeriodicTableUtils.GetGroup(element.AtomicNumber));
+
+            LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
+            Title = $"{((element.Name != null) ? element.Name : "Element")} - Periodic Table";
 
             if (element.AtomicMass != null)
             {
@@ -146,6 +148,8 @@ namespace PeriodicTable.WPF
 
         private void Clear()
         {
+            Title = "Element - Periodic Table";
+
             LabelGP.Text = "P, G";
             LabelMass.Text = "Mass";
             LabelSymbol.Text = "Symbol";
@@ -197,7 +201,7 @@ namespace PeriodicTable.WPF
             }
             catch (Exception ex)
             {
-                Modscleo4.WPFUI.MessageBox.Show(string.Format("A unexpected exception occourred! Details: {0}", ex.Message), "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Modscleo4.WPFUI.MessageBox.Show($"A unexpected exception occourred! Details: {ex.Message}", "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
     }

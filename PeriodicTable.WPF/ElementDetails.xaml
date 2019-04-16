@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PeriodicTable.WPF"
         xmlns:controls="clr-namespace:Modscleo4.WPFUI.Controls;assembly=WPFUI"
         mc:Ignorable="d"
-        Title="Periodic Table" MinHeight="450" Height="450" MinWidth="800" Width="800" ResizeMode="CanResize" SearchboxVisibility="Visible" SearchboxPlaceholder="Element" Search="Window_Search">
+        Title="Element - Periodic Table" MinHeight="450" Height="450" MinWidth="800" Width="800" ResizeMode="CanResize" SearchboxVisibility="Visible" SearchboxPlaceholder="Element" Search="Window_Search">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
