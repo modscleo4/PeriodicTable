@@ -26,8 +26,8 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock x:Name="LabelNumber" Foreground="#FFD5D5D5" Grid.Row="0" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Number" />
-                <TextBlock x:Name="LabelSymbol" Foreground="#FFD5D5D5" Grid.Row="1" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Sym" />
-                <TextBlock x:Name="LabelName" Foreground="#FFD5D5D5" Grid.Row="2" FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Name" />
+                <TextBlock x:Name="LabelSymbol" Foreground="#FFD5D5D5" Grid.Row="1" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Sym" />
+                <TextBlock x:Name="LabelName" Foreground="#FFD5D5D5" Grid.Row="2" FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Name" />
                 <TextBlock x:Name="LabelMass" Foreground="#FFD5D5D5" Grid.Row="3" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Mass" />
             </Grid>
         </Border>
