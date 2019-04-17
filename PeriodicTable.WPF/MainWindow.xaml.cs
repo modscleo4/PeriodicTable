@@ -1,7 +1,6 @@
 ﻿using PeriodicTable.Model.DAO;
 using PeriodicTable.Model.Support;
 using PeriodicTable.WPF.Controls;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,15 +22,6 @@ namespace PeriodicTable.WPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                ElementDAO.UpdateFromAPI();
-            }
-            catch (WebException)
-            {
-                Modscleo4.WPFUI.MessageBox.Show("Unable to get information from server! Using from cached.", "Periodic Table", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-
             var elements = ElementDAO.Select();
             foreach (var element in elements)
             {
@@ -45,37 +35,33 @@ namespace PeriodicTable.WPF
 
                 if (row == 1)
                 {
-                    if (column >= 2)
+                    if (column == 2)
                     {
-                        // Helium (2) is at column 18 (17 in the grid)
-                        column += 17;
+                        column = PeriodicTableUtils.GetPeriodMaxE(4);
                     }
                 }
                 else if (row == 2)
                 {
                     if (column > 2)
                     {
-                        // Borum (5) is at column 13 (12 in the grid)
-                        column += 10;
+                        column += PeriodicTableUtils.GetPeriodMaxE(4) - PeriodicTableUtils.GetPeriodMaxE(row);
                     }
                 }
                 else if (row == 3)
                 {
                     if (column > 2)
                     {
-                        // Alluminum (13) is at column 13 (12 in the grid)
-                        column += 10;
+                        column += PeriodicTableUtils.GetPeriodMaxE(4) - PeriodicTableUtils.GetPeriodMaxE(row);
                     }
                 }
                 else if (row == 6)
                 {
                     if (column > 2)
                     {
-                        // Lanthanoids start at column 3 (2 in the grid)
-                        if (column <= 17)
+                        if (column < PeriodicTableUtils.GetPeriodMaxE(5))
                         {
                             // Lanthanoids is at row 8
-                            row = 9;
+                            row += 3;
                             column += 1;
                         }
                         else
@@ -90,10 +76,10 @@ namespace PeriodicTable.WPF
                     if (column > 2)
                     {
                         // Actinoids start at column 3 (2 in the grid)
-                        if (column <= 17)
+                        if (column < PeriodicTableUtils.GetPeriodMaxE(5))
                         {
                             // Actinoids is at row 9
-                            row = 10;
+                            row += 3;
                             column += 1;
                         }
                         else

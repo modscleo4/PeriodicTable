@@ -2,6 +2,7 @@
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 
@@ -12,8 +13,6 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class ElementDetails : Modscleo4.WPFUI.Controls.Window
     {
-        private Element element;
-
         private ElementDAO ElementDAO = new ElementDAO();
         private PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
 
@@ -28,14 +27,7 @@ namespace PeriodicTable.WPF
 
             try
             {
-                element = ElementDAO.Select(atomicNumber);
-
-                if (element == null)
-                {
-                    throw new PeriodicTableException("Element does not exist!");
-                }
-
-                LoadElement();
+                LoadElement(atomicNumber);
             }
             catch (PeriodicTableException ex)
             {
@@ -47,8 +39,25 @@ namespace PeriodicTable.WPF
             }
         }
 
-        private void LoadElement()
+        private void LoadElement(int atomicNumber)
         {
+            var element = ElementDAO.Select(atomicNumber);
+            LoadElementInfo(element);
+        }
+
+        private void LoadElement(string symbolOrName)
+        {
+            var element = ElementDAO.Select(symbolOrName);
+            LoadElementInfo(element);
+        }
+
+        private void LoadElementInfo(Element element)
+        {
+            if (element == null)
+            {
+                throw new PeriodicTableException("Element does not exist!");
+            }
+
             ElementBorder.BorderBrush = new SolidColorBrush(element.GroupBlock.Color);
 
             LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
@@ -101,6 +110,16 @@ namespace PeriodicTable.WPF
             if (element.ElectronicConfiguration != null)
             {
                 LabelElectronicConfiguration.Text = element.ElectronicConfiguration;
+
+                string electronicConfiguration = element.ElectronicConfiguration;
+
+                while (Regex.Match(electronicConfiguration, @"\[.*\]").Success)
+                {
+                    var e = ElementDAO.Select(Regex.Replace(electronicConfiguration, @"^.*\[(.*)\].*$", @"$1"));
+                    electronicConfiguration = Regex.Replace(electronicConfiguration, @"(\[(.*)\])", e.ElectronicConfiguration);
+                }
+
+                LabelElectronicConfiguration.ToolTip = electronicConfiguration;
             }
 
             if (element.GroupBlock != null)
@@ -160,7 +179,10 @@ namespace PeriodicTable.WPF
             LabelDensity.Text = string.Empty;
             LabelElectronAffinity.Text = string.Empty;
             LabelElectronegativity.Text = string.Empty;
+
             LabelElectronicConfiguration.Text = string.Empty;
+            LabelElectronicConfiguration.ToolTip = "";
+
             LabelGroupBlock.Text = string.Empty;
             LabelIonRadius.Text = string.Empty;
             LabelIonizationEnergy.Text = string.Empty;
@@ -179,19 +201,12 @@ namespace PeriodicTable.WPF
             {
                 if (int.TryParse(element, out int n))
                 {
-                    this.element = ElementDAO.Select(n);
+                    LoadElement(n);
                 }
                 else
                 {
-                    this.element = ElementDAO.Select(element);
+                    LoadElement(element);
                 }
-
-                if (this.element == null)
-                {
-                    throw new PeriodicTableException("Element does not exist!");
-                }
-
-                LoadElement();
             }
             catch (PeriodicTableException ex)
             {

@@ -7,6 +7,8 @@ namespace PeriodicTable.WPF.Controls
 {
     public class GridElement : Control
     {
+        #region Properties 
+
         public static readonly DependencyProperty AtomicNumberProperty;
         public string AtomicNumber
         {
@@ -35,12 +37,40 @@ namespace PeriodicTable.WPF.Controls
             }
         }
 
-        public GridElement() : base()
+        #endregion Properties
+
+        #region Events
+
+        public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(GridElement));
+
+        public event RoutedEventHandler Click
         {
-            MouseDoubleClick += new MouseButtonEventHandler(GridElement_MouseDoubleClick);
+            add { AddHandler(ClickEvent, value); }
+            remove { RemoveHandler(ClickEvent, value); }
         }
 
-        private void GridElement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        protected virtual void OnClick()
+        {
+            RoutedEventArgs args = new RoutedEventArgs(ClickEvent, this);
+
+            RaiseEvent(args);
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            OnClick();
+        }
+
+        #endregion Events
+
+        public GridElement() : base()
+        {
+            Click += new RoutedEventHandler(GridElement_Click);
+        }
+
+        private void GridElement_Click(object sender, RoutedEventArgs e)
         {
             new ElementDetails(Convert.ToInt32(AtomicNumber)).ShowDialog();
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 
 namespace PeriodicTable.Model.Database
 {
@@ -39,9 +41,25 @@ namespace PeriodicTable.Model.Database
                 con = new SQLiteConnection(connectionString);
                 con.Open();
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Abre a conexão de forma assíncrona
+        /// </summary>
+        public async Task OpenAsync()
+        {
+            try
+            {
+                con = new SQLiteConnection(connectionString);
+                await con.OpenAsync();
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -75,9 +93,9 @@ namespace PeriodicTable.Model.Database
 
                 return r;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 
@@ -107,9 +125,66 @@ namespace PeriodicTable.Model.Database
 
                 return r;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Executa um comando SQL sem retorno de forma assíncrona
+        /// </summary>
+        /// <param name="sql">O comando SQL</param>
+        /// <returns>Retorna o número de linhas afetadas pela query</returns>
+        public async Task<int> RunAsync(string sql)
+        {
+            try
+            {
+                await OpenAsync();
+
+                sql = await Task.Run(() => sql.Trim());
+
+                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
+                var r = await cmd.ExecuteNonQueryAsync();
+
+                Close();
+
+                return r;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Executa um comando SQL sem retorno de forma assíncrona (com parâmetros)
+        /// </summary>
+        /// <param name="sql">O comando SQL</param>
+        /// <returns>Retorna o número de linhas afetadas pela query</returns>
+        public async Task<int> RunAsync(string sql, List<object> parameters)
+        {
+            try
+            {
+                await OpenAsync();
+
+                sql = await Task.Run(() => sql.Trim());
+
+                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
+                var i = 1;
+                foreach (var parameter in parameters)
+                {
+                    await Task.Run(() => cmd.Parameters.AddWithValue($"@{i++}", parameter));
+                }
+                var r = await cmd.ExecuteNonQueryAsync();
+
+                Close();
+
+                return r;
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -129,9 +204,9 @@ namespace PeriodicTable.Model.Database
                 var cmd = new SQLiteCommand(sql, con);
                 return cmd.ExecuteReader(CommandBehavior.CloseConnection);
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 
@@ -157,9 +232,59 @@ namespace PeriodicTable.Model.Database
                 }
                 return cmd.ExecuteReader(CommandBehavior.CloseConnection);
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Executa um comando SQL com retorno de dados de forma assíncrona
+        /// </summary>
+        /// <param name="sql">O comando SQL</param>
+        /// <returns>Retorna os dados selecionados</returns>
+        public async Task<DbDataReader> SelectAsync(string sql)
+        {
+            try
+            {
+                await OpenAsync();
+
+                sql = await Task.Run(() => sql.Trim());
+
+                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
+                return await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Executa um comando SQL com retorno de dados de forma assíncrona (com parâmetros)
+        /// </summary>
+        /// <param name="sql">O comando SQL</param>
+        /// <param name="parameters">Os parâmetros do comando</param>
+        /// <returns>Retorna os dados selecionados</returns>
+        public async Task<DbDataReader> SelectAsync(string sql, List<object> parameters)
+        {
+            try
+            {
+                await OpenAsync();
+
+                sql = await Task.Run(() => sql.Trim());
+
+                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
+                var i = 1;
+                foreach (var parameter in parameters)
+                {
+                    await Task.Run(() => cmd.Parameters.AddWithValue($"@{i++}", parameter));
+                }
+                return await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -184,9 +309,9 @@ namespace PeriodicTable.Model.Database
                 Close();
                 return dt;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 
@@ -217,9 +342,9 @@ namespace PeriodicTable.Model.Database
                 Close();
                 return dt;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 
@@ -244,9 +369,9 @@ namespace PeriodicTable.Model.Database
                 Close();
                 return ds;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 
@@ -277,9 +402,9 @@ namespace PeriodicTable.Model.Database
                 Close();
                 return ds;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 
@@ -321,9 +446,9 @@ namespace PeriodicTable.Model.Database
                 Close();
                 return ds;
             }
-            catch (SQLiteException e)
+            catch
             {
-                throw new SQLiteException(e.Message);
+                throw;
             }
         }
 

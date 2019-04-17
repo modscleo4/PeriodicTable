@@ -2,11 +2,11 @@
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Globalization;
-using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using static PeriodicTable.Model.Database.DB;
 
@@ -19,7 +19,7 @@ namespace PeriodicTable.Model.DAO
         private GroupBlockDAO GroupBlockDAO = new GroupBlockDAO();
         private StandardStateDAO StandardStateDAO = new StandardStateDAO();
 
-        private Element GetObject(ref SQLiteDataReader dr)
+        private Element GetObject(DbDataReader dr)
         {
             var element = new Element()
             {
@@ -219,7 +219,7 @@ namespace PeriodicTable.Model.DAO
             return element;
         }
 
-        public void Save(Element element)
+        public async Task Save(Element element)
         {
             var sql = "SELECT * " +
                         "FROM element " +
@@ -257,7 +257,7 @@ namespace PeriodicTable.Model.DAO
                           "(@1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18)";
             }
 
-            con.Run(sql, new List<object>
+            await con.RunAsync(sql, new List<object>
             {
                 element.AtomicNumber,
                 element.Symbol,
@@ -280,34 +280,26 @@ namespace PeriodicTable.Model.DAO
             });
         }
 
-        public void UpdateFromAPI()
+        public async Task UpdateFromAPI()
         {
             var url = $"https://neelpatel05.pythonanywhere.com/";
-            dynamic data = serializer.DeserializeObject(Get(url));
-            foreach (dynamic innerData in data)
-            {
-                Element element = GetObjectFromJSON(innerData);
-                Save(element);
-            }
-        }
+            var webClient = new WebClient();
 
-        private string Get(string url)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            var content = new MemoryStream();
-
-            try
+            if (Common.RemoteFileExists(url))
             {
-                WebResponse response = request.GetResponse();
-                using (Stream stream = response.GetResponseStream())
+                var content = await webClient.DownloadStringTaskAsync(new Uri(url));
+
+                dynamic data = await Task.Run(() => serializer.DeserializeObject(content));
+
+                foreach (dynamic innerData in data)
                 {
-                    StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-                    return reader.ReadToEnd();
+                    Element element = await Task.Run(() => GetObjectFromJSON(innerData));
+                    await Save(element);
                 }
             }
-            catch (WebException)
+            else
             {
-                throw new WebException("Unable to get information from the server");
+                throw new WebException("Could not update from API. Using cached data.");
             }
         }
 
@@ -319,7 +311,7 @@ namespace PeriodicTable.Model.DAO
             var dr = con.Select(sql);
             while (dr.Read())
             {
-                elements.Add(GetObject(ref dr));
+                elements.Add(GetObject(dr));
             }
             dr.Close();
 
@@ -336,7 +328,7 @@ namespace PeriodicTable.Model.DAO
             if (dr.HasRows)
             {
                 dr.Read();
-                element = GetObject(ref dr);
+                element = GetObject(dr);
                 dr.Close();
             }
 
@@ -354,7 +346,7 @@ namespace PeriodicTable.Model.DAO
             if (dr.HasRows)
             {
                 dr.Read();
-                element = GetObject(ref dr);
+                element = GetObject(dr);
                 dr.Close();
             }
 
