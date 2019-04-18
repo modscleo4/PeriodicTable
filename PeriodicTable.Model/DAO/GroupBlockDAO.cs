@@ -3,6 +3,7 @@ using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using static PeriodicTable.Model.Database.DB;
 
@@ -87,6 +88,18 @@ namespace PeriodicTable.Model.DAO
             return Select(id);
         }
 
+        public Task<GroupBlock> SaveAsync(string name)
+        {
+            var tcs = new TaskCompletionSource<GroupBlock>();
+            Task.Run(() =>
+            {
+                var r = Save(name);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
+        }
+
         public GroupBlock Select(long id)
         {
             GroupBlock groupBlock = null;
@@ -126,6 +139,30 @@ namespace PeriodicTable.Model.DAO
             }
 
             return groupBlock;
+        }
+
+        public Task<GroupBlock> SelectAsync(long id)
+        {
+            var tcs = new TaskCompletionSource<GroupBlock>();
+            Task.Run(() =>
+            {
+                var r = Select(id);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<GroupBlock> SelectAsync(string name)
+        {
+            var tcs = new TaskCompletionSource<GroupBlock>();
+            Task.Run(() =>
+            {
+                var r = Select(name);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
         }
     }
 }

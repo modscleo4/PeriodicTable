@@ -12,23 +12,25 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class MainWindow : Modscleo4.WPFUI.Controls.Window
     {
-        private ElementDAO ElementDAO = new ElementDAO();
-        private PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
+        private readonly ElementDAO ElementDAO = new ElementDAO();
+        private readonly PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var elements = ElementDAO.Select();
+            var elements = await ElementDAO.SelectAsync();
             foreach (var element in elements)
             {
-                var gridElement = new GridElement();
-
-                gridElement.AtomicNumber = element.AtomicNumber.ToString();
-                gridElement.Symbol = element.Symbol;
+                var gridElement = new GridElement
+                {
+                    AtomicNumber = element.AtomicNumber.ToString(),
+                    Symbol = element.Symbol,
+                    BorderBrush = new SolidColorBrush(element.GroupBlock.Color)
+                };
 
                 var column = PeriodicTableUtils.GetGroup(element.AtomicNumber);
                 var row = PeriodicTableUtils.GetPeriod(element.AtomicNumber);
@@ -89,8 +91,6 @@ namespace PeriodicTable.WPF
                         }
                     }
                 }
-
-                gridElement.BorderBrush = new SolidColorBrush(element.GroupBlock.Color);
 
                 Grid.SetRow(gridElement, (int)row - 1);
                 Grid.SetColumn(gridElement, (int)column - 1);

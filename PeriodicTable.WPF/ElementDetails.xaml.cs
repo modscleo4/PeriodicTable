@@ -13,8 +13,8 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class ElementDetails : Modscleo4.WPFUI.Controls.Window
     {
-        private ElementDAO ElementDAO = new ElementDAO();
-        private PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
+        private readonly ElementDAO ElementDAO = new ElementDAO();
+        private readonly PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
 
         public ElementDetails()
         {
@@ -45,9 +45,9 @@ namespace PeriodicTable.WPF
             LoadElementInfo(element);
         }
 
-        private void LoadElement(string symbolOrName)
+        private void LoadElement(string symbol)
         {
-            var element = ElementDAO.Select(symbolOrName);
+            var element = ElementDAO.Select(symbol);
             LoadElementInfo(element);
         }
 
@@ -181,7 +181,7 @@ namespace PeriodicTable.WPF
             LabelElectronegativity.Text = string.Empty;
 
             LabelElectronicConfiguration.Text = string.Empty;
-            LabelElectronicConfiguration.ToolTip = "";
+            LabelElectronicConfiguration.ToolTip = string.Empty;
 
             LabelGroupBlock.Text = string.Empty;
             LabelIonRadius.Text = string.Empty;
@@ -194,18 +194,18 @@ namespace PeriodicTable.WPF
 
         private void Window_Search(object sender, RoutedEventArgs e)
         {
-            var element = SearchboxValue;
+            var name = SearchboxValue;
             Clear();
 
             try
             {
-                if (int.TryParse(element, out int n))
+                if (int.TryParse(name, out int n))
                 {
                     LoadElement(n);
                 }
                 else
                 {
-                    LoadElement(element);
+                    LoadElement(name);
                 }
             }
             catch (PeriodicTableException ex)

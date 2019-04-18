@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SQLite;
 using System.Threading.Tasks;
 
@@ -40,22 +39,6 @@ namespace PeriodicTable.Model.Database
             {
                 con = new SQLiteConnection(connectionString);
                 con.Open();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Abre a conexão de forma assíncrona
-        /// </summary>
-        public async Task OpenAsync()
-        {
-            try
-            {
-                con = new SQLiteConnection(connectionString);
-                await con.OpenAsync();
             }
             catch
             {
@@ -136,25 +119,16 @@ namespace PeriodicTable.Model.Database
         /// </summary>
         /// <param name="sql">O comando SQL</param>
         /// <returns>Retorna o número de linhas afetadas pela query</returns>
-        public async Task<int> RunAsync(string sql)
+        public Task<int> RunAsync(string sql)
         {
-            try
+            var tcs = new TaskCompletionSource<int>();
+            Task.Run(() =>
             {
-                await OpenAsync();
+                var r = Run(sql);
+                tcs.SetResult(r);
+            });
 
-                sql = await Task.Run(() => sql.Trim());
-
-                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
-                var r = await cmd.ExecuteNonQueryAsync();
-
-                Close();
-
-                return r;
-            }
-            catch
-            {
-                throw;
-            }
+            return tcs.Task;
         }
 
         /// <summary>
@@ -162,30 +136,16 @@ namespace PeriodicTable.Model.Database
         /// </summary>
         /// <param name="sql">O comando SQL</param>
         /// <returns>Retorna o número de linhas afetadas pela query</returns>
-        public async Task<int> RunAsync(string sql, List<object> parameters)
+        public Task<int> RunAsync(string sql, List<object> parameters)
         {
-            try
+            var tcs = new TaskCompletionSource<int>();
+            Task.Run(() =>
             {
-                await OpenAsync();
+                var r = Run(sql, parameters);
+                tcs.SetResult(r);
+            });
 
-                sql = await Task.Run(() => sql.Trim());
-
-                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
-                var i = 1;
-                foreach (var parameter in parameters)
-                {
-                    await Task.Run(() => cmd.Parameters.AddWithValue($"@{i++}", parameter));
-                }
-                var r = await cmd.ExecuteNonQueryAsync();
-
-                Close();
-
-                return r;
-            }
-            catch
-            {
-                throw;
-            }
+            return tcs.Task;
         }
 
         /// <summary>
@@ -243,21 +203,16 @@ namespace PeriodicTable.Model.Database
         /// </summary>
         /// <param name="sql">O comando SQL</param>
         /// <returns>Retorna os dados selecionados</returns>
-        public async Task<DbDataReader> SelectAsync(string sql)
+        public Task<SQLiteDataReader> SelectAsync(string sql)
         {
-            try
+            var tcs = new TaskCompletionSource<SQLiteDataReader>();
+            Task.Run(() =>
             {
-                await OpenAsync();
+                var r = Select(sql);
+                tcs.SetResult(r);
+            });
 
-                sql = await Task.Run(() => sql.Trim());
-
-                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
-                return await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
-            }
-            catch
-            {
-                throw;
-            }
+            return tcs.Task;
         }
 
         /// <summary>
@@ -266,26 +221,16 @@ namespace PeriodicTable.Model.Database
         /// <param name="sql">O comando SQL</param>
         /// <param name="parameters">Os parâmetros do comando</param>
         /// <returns>Retorna os dados selecionados</returns>
-        public async Task<DbDataReader> SelectAsync(string sql, List<object> parameters)
+        public Task<SQLiteDataReader> SelectAsync(string sql, List<object> parameters)
         {
-            try
+            var tcs = new TaskCompletionSource<SQLiteDataReader>();
+            Task.Run(() =>
             {
-                await OpenAsync();
+                var r = Select(sql, parameters);
+                tcs.SetResult(r);
+            });
 
-                sql = await Task.Run(() => sql.Trim());
-
-                var cmd = await Task.Run(() => new SQLiteCommand(sql, con));
-                var i = 1;
-                foreach (var parameter in parameters)
-                {
-                    await Task.Run(() => cmd.Parameters.AddWithValue($"@{i++}", parameter));
-                }
-                return await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
-            }
-            catch
-            {
-                throw;
-            }
+            return tcs.Task;
         }
 
         /// <summary>

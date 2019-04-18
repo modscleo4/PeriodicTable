@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace PeriodicTable.Model.Support
 {
@@ -10,7 +11,7 @@ namespace PeriodicTable.Model.Support
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
         }
 
-        public static bool RemoteFileExists(string url)
+        public async static Task<bool> RemoteFileExists(string url)
         {
             HttpWebResponse response = null;
             var request = (HttpWebRequest)WebRequest.Create(url);
@@ -20,7 +21,7 @@ namespace PeriodicTable.Model.Support
 
             try
             {
-                response = (HttpWebResponse)request.GetResponse();
+                response = (HttpWebResponse) await request.GetResponseAsync();
             }
             catch (WebException)
             {

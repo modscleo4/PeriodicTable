@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PeriodicTable.WPF"
-        xmlns:controls="clr-namespace:Modscleo4.WPFUI.Controls;assembly=WPFUI"
+        xmlns:controls="clr-namespace:Modscleo4.WPFUI.Controls;assembly=Modscleo4.WPFUI"
         mc:Ignorable="d"
         Title="Main Window - Periodic Table" Height="576" MinHeight="576" Width="1024" MinWidth="1024" Loaded="Window_Loaded" ResizeMode="CanResize">
     <Grid>

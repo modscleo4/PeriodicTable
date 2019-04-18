@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:PeriodicTable.WPF"
              StartupUri="APIUpdate.xaml">
     <Application.Resources>
-         
+        
     </Application.Resources>
 </Application>

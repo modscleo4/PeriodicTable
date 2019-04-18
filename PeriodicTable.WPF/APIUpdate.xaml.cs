@@ -10,7 +10,7 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class APIUpdate : Modscleo4.WPFUI.Controls.Window
     {
-        private ElementDAO ElementDAO = new ElementDAO();
+        private readonly ElementDAO ElementDAO = new ElementDAO();
 
         public APIUpdate()
         {

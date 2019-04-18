@@ -219,7 +219,7 @@ namespace PeriodicTable.Model.DAO
             return element;
         }
 
-        public async Task Save(Element element)
+        public void Save(Element element)
         {
             var sql = "SELECT * " +
                         "FROM element " +
@@ -257,7 +257,7 @@ namespace PeriodicTable.Model.DAO
                           "(@1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18)";
             }
 
-            await con.RunAsync(sql, new List<object>
+            con.Run(sql, new List<object>
             {
                 element.AtomicNumber,
                 element.Symbol,
@@ -280,12 +280,20 @@ namespace PeriodicTable.Model.DAO
             });
         }
 
+        public async Task SaveAsync(Element element)
+        {
+            await Task.Run(() =>
+            {
+                Save(element);
+            });
+        }
+
         public async Task UpdateFromAPI()
         {
             var url = $"https://neelpatel05.pythonanywhere.com/";
             var webClient = new WebClient();
 
-            if (Common.RemoteFileExists(url))
+            if (await Common.RemoteFileExists(url))
             {
                 var content = await webClient.DownloadStringTaskAsync(new Uri(url));
 
@@ -294,7 +302,7 @@ namespace PeriodicTable.Model.DAO
                 foreach (dynamic innerData in data)
                 {
                     Element element = await Task.Run(() => GetObjectFromJSON(innerData));
-                    await Save(element);
+                    await SaveAsync(element);
                 }
             }
             else
@@ -351,6 +359,42 @@ namespace PeriodicTable.Model.DAO
             }
 
             return element;
+        }
+
+        public Task<List<Element>> SelectAsync()
+        {
+            var tcs = new TaskCompletionSource<List<Element>>();
+            Task.Run(() =>
+            {
+                var r = Select();
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<Element> SelectAsync(int atomicNumber)
+        {
+            var tcs = new TaskCompletionSource<Element>();
+            Task.Run(() =>
+            {
+                var r = Select(atomicNumber);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<Element> SelectAsync(string symbol)
+        {
+            var tcs = new TaskCompletionSource<Element>();
+            Task.Run(() =>
+            {
+                var r = Select(symbol);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
         }
     }
 }

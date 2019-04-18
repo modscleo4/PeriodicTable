@@ -3,6 +3,7 @@ using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
@@ -37,6 +38,18 @@ namespace PeriodicTable.Model.DAO
             dr.Close();
 
             return Select(id);
+        }
+
+        public Task<StandardState> SaveAsync(string value)
+        {
+            var tcs = new TaskCompletionSource<StandardState>();
+            Task.Run(() =>
+            {
+                var r = Save(value);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
         }
 
         public StandardState Select(long id)
@@ -78,6 +91,30 @@ namespace PeriodicTable.Model.DAO
             }
 
             return standardState;
+        }
+
+        public Task<StandardState> SelectAsync(long id)
+        {
+            var tcs = new TaskCompletionSource<StandardState>();
+            Task.Run(() =>
+            {
+                var r = Select(id);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<StandardState> SelectAsync(string value)
+        {
+            var tcs = new TaskCompletionSource<StandardState>();
+            Task.Run(() =>
+            {
+                var r = Select(value);
+                tcs.SetResult(r);
+            });
+
+            return tcs.Task;
         }
     }
 }
