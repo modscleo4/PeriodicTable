@@ -1,4 +1,4 @@
-﻿namespace PeriodicTable.Model.Support
+namespace PeriodicTable.Model.Support
 {
     public class PeriodicTableUtils
     {

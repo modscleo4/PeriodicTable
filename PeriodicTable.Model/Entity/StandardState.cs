@@ -1,4 +1,4 @@
-﻿namespace PeriodicTable.Model.Entity
+namespace PeriodicTable.Model.Entity
 {
     public class StandardState
     {

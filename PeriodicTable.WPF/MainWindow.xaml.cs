@@ -1,4 +1,4 @@
-﻿using PeriodicTable.Model.DAO;
+using PeriodicTable.Model.DAO;
 using PeriodicTable.Model.Support;
 using PeriodicTable.WPF.Controls;
 using System.Windows;

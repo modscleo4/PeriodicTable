@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -234,7 +234,7 @@ namespace PeriodicTable.Model.Database
         }
 
         /// <summary>
-        /// Obtém um DataTable 
+        /// Obtém um DataTable
         /// </summary>
         /// <param name="sql">O comando SQL</param>
         /// <returns>Retorna um DataTable com os dados selecionados</returns>

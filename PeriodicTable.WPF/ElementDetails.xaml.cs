@@ -1,4 +1,4 @@
-﻿using PeriodicTable.Model.DAO;
+using PeriodicTable.Model.DAO;
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;

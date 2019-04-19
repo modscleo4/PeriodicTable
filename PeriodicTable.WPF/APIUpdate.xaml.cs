@@ -1,4 +1,4 @@
-﻿using PeriodicTable.Model.DAO;
+using PeriodicTable.Model.DAO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;

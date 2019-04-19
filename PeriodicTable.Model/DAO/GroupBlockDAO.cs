@@ -1,4 +1,4 @@
-﻿using PeriodicTable.Model.Entity;
+using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;

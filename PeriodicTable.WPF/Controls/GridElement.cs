@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -7,7 +7,7 @@ namespace PeriodicTable.WPF.Controls
 {
     public class GridElement : Control
     {
-        #region Properties 
+        #region Properties
 
         public static readonly DependencyProperty AtomicNumberProperty;
         public string AtomicNumber
