@@ -29,7 +29,7 @@ namespace PeriodicTable.WPF
                 {
                     AtomicNumber = element.AtomicNumber.ToString(),
                     Symbol = element.Symbol,
-                    BorderBrush = new SolidColorBrush(element.GroupBlock.Color)
+                    BorderBrush = new SolidColorBrush(Color.FromArgb(element.GroupBlock.Color.A, element.GroupBlock.Color.R, element.GroupBlock.Color.G, element.GroupBlock.Color.B))
                 };
 
                 var column = PeriodicTableUtils.GetGroup(element.AtomicNumber);

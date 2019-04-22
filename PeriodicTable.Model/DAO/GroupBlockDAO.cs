@@ -3,8 +3,8 @@ using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Drawing;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO

@@ -7,9 +7,46 @@
         xmlns:controls="clr-namespace:Modscleo4.WPFUI.Controls;assembly=Modscleo4.WPFUI"
         mc:Ignorable="d"
         Title="APIUpdate" Height="350" Width="600" Loaded="Window_Loaded">
-    <Grid>
-        <Label Foreground="#FFD5D5D5" Content="Updating data from API..." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <ProgressBar HorizontalAlignment="Left" Height="26" Margin="158,10,0,0" VerticalAlignment="Top" Width="424" IsIndeterminate="True"/>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <Label Content="Updating data from API...">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Setter Property="Foreground" Value="#FFD5D5D5" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="VerticalAlignment" Value="Bottom" />
+                </Style>
+            </Label.Style>
+        </Label>
+
+        <ProgressBar x:Name="UpdateProgressBar" Grid.Column="1" IsIndeterminate="True">
+            <ProgressBar.Style>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </ProgressBar.Style>
+        </ProgressBar>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+            <Label x:Name="LabelStatus" Content="Checking API status">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Foreground" Value="#FFD5D5D5" />
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                    </Style>
+                </Label.Style>
+            </Label>
+        </Grid>
     </Grid>
 </controls:Window>

@@ -1,4 +1,5 @@
 using PeriodicTable.Model.DAO;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,7 +27,22 @@ namespace PeriodicTable.WPF
         {
             try
             {
-                await ElementDAO.UpdateFromAPI();
+                await ElementDAO.UpdateFromAPI(new Progress<int>(percent =>
+                {
+                    if (percent == -1)
+                    {
+                        // Checking API
+                        UpdateProgressBar.IsIndeterminate = true;
+                        LabelStatus.Content = "Checking API status";
+                    }
+                    else
+                    {
+                        // Updating cache
+                        UpdateProgressBar.IsIndeterminate = false;
+                        LabelStatus.Content = "Updating cache";
+                        UpdateProgressBar.Value = percent;
+                    }
+                }));
             }
             catch (WebException)
             {

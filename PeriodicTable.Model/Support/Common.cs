@@ -21,7 +21,7 @@ namespace PeriodicTable.Model.Support
 
             try
             {
-                response = (HttpWebResponse) await request.GetResponseAsync();
+                response = (HttpWebResponse)await request.GetResponseAsync();
             }
             catch (WebException)
             {

@@ -58,7 +58,7 @@ namespace PeriodicTable.WPF
                 throw new PeriodicTableException("Element does not exist!");
             }
 
-            ElementBorder.BorderBrush = new SolidColorBrush(element.GroupBlock.Color);
+            ElementBorder.BorderBrush = new SolidColorBrush(Color.FromArgb(element.GroupBlock.Color.A, element.GroupBlock.Color.R, element.GroupBlock.Color.G, element.GroupBlock.Color.B));
 
             LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
             Title = $"{(element.Name ?? "Element")} - Periodic Table";

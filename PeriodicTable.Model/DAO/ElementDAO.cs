@@ -1,25 +1,24 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data.SQLite;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
 {
     public class ElementDAO
     {
-        private JavaScriptSerializer serializer = new JavaScriptSerializer();
-
         private GroupBlockDAO GroupBlockDAO = new GroupBlockDAO();
         private StandardStateDAO StandardStateDAO = new StandardStateDAO();
 
-        private Element GetObject(DbDataReader dr)
+        private Element GetObject(ref SQLiteDataReader dr)
         {
             var element = new Element()
             {
@@ -123,7 +122,7 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("atomicMass"))
             {
-                if (data["atomicMass"].GetType().IsArray)
+                if (data["atomicMass"] is JArray)
                 {
                     data["atomicMass"] = data["atomicMass"][0];
                 }
@@ -288,21 +287,32 @@ namespace PeriodicTable.Model.DAO
             });
         }
 
-        public async Task UpdateFromAPI()
+        public async Task UpdateFromAPI(IProgress<int> progress = null)
         {
             var url = $"https://neelpatel05.pythonanywhere.com/";
             var webClient = new WebClient();
 
+            if (progress != null)
+            {
+                progress.Report(-1);
+            }
+
             if (await Common.RemoteFileExists(url))
             {
                 var content = await webClient.DownloadStringTaskAsync(new Uri(url));
+                dynamic data = await Task.Run(() => JsonConvert.DeserializeObject(content));
 
-                dynamic data = await Task.Run(() => serializer.DeserializeObject(content));
-
+                int count = 0;
                 foreach (dynamic innerData in data)
                 {
                     Element element = await Task.Run(() => GetObjectFromJSON(innerData));
                     await SaveAsync(element);
+
+                    if (progress != null)
+                    {
+                        progress.Report(count * 100 / data.Count);
+                        count++;
+                    }
                 }
             }
             else
@@ -319,7 +329,7 @@ namespace PeriodicTable.Model.DAO
             var dr = con.Select(sql);
             while (dr.Read())
             {
-                elements.Add(GetObject(dr));
+                elements.Add(GetObject(ref dr));
             }
             dr.Close();
 
@@ -336,7 +346,7 @@ namespace PeriodicTable.Model.DAO
             if (dr.HasRows)
             {
                 dr.Read();
-                element = GetObject(dr);
+                element = GetObject(ref dr);
                 dr.Close();
             }
 
@@ -354,7 +364,7 @@ namespace PeriodicTable.Model.DAO
             if (dr.HasRows)
             {
                 dr.Read();
-                element = GetObject(dr);
+                element = GetObject(ref dr);
                 dr.Close();
             }
 
