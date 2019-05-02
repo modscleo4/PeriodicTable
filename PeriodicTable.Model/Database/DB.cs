@@ -8,23 +8,28 @@ namespace PeriodicTable.Model.Database
     /// </summary>
     public static class DB
     {
-        private static string dataSource = Path.Combine(Environment.CurrentDirectory, "PeriodicTable.db");
+        private static string home = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        private static string dataSource = Path.Combine(home, "PeriodicTable.db");
 
         public static Connection con = new Connection(dataSource);
 
         static DB()
         {
             var sql = "CREATE TABLE IF NOT EXISTS groupBlock (" +
+                          "rowid INTEGER NOT NULL PRIMARY KEY, " +
                           "name TEXT NOT NULL" +
                         ")";
             con.Run(sql);
 
             sql = "CREATE TABLE IF NOT EXISTS standardState (" +
+                          "rowid INTEGER NOT NULL PRIMARY KEY, " +
                           "value TEXT NOT NULL" +
                         ")";
             con.Run(sql);
 
             sql = "CREATE TABLE IF NOT EXISTS element (" +
+                          "rowid INTEGER NOT NULL PRIMARY KEY, " +
                           "atomicNumber INTEGER NOT NULL, " +
                           "symbol TEXT, " +
                           "atomicMass REAL, " +

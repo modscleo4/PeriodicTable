@@ -1,8 +1,8 @@
+using Microsoft.Data.Sqlite;
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Threading.Tasks;
 using static PeriodicTable.Model.Database.DB;
 
@@ -10,7 +10,7 @@ namespace PeriodicTable.Model.DAO
 {
     public class StandardStateDAO
     {
-        private StandardState GetObject(ref SQLiteDataReader dr)
+        private StandardState GetObject(ref SqliteDataReader dr)
         {
             var standardState = new StandardState()
             {

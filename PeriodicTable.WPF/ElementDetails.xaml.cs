@@ -2,6 +2,7 @@ using PeriodicTable.Model.DAO;
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
@@ -139,7 +140,13 @@ namespace PeriodicTable.WPF
 
             if (element.OxidationStates != null)
             {
-                LabelOxidationStates.Text = element.OxidationStates;
+                var oxStates = new List<string>();
+                foreach (var oxState in element.OxidationStates)
+                {
+                    oxStates.Add(oxState > 0 ? $"+{oxState}" : $"{oxState}");
+                }
+
+                LabelOxidationStates.Text = string.Join(", ", oxStates);
             }
 
             if (element.StandardState != null)

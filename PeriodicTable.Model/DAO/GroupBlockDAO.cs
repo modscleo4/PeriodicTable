@@ -1,8 +1,8 @@
+using Microsoft.Data.Sqlite;
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Drawing;
 using System.Threading.Tasks;
 using static PeriodicTable.Model.Database.DB;
@@ -11,7 +11,7 @@ namespace PeriodicTable.Model.DAO
 {
     public class GroupBlockDAO
     {
-        private GroupBlock GetObject(ref SQLiteDataReader dr)
+        private GroupBlock GetObject(ref SqliteDataReader dr)
         {
             var groupBlock = new GroupBlock()
             {

@@ -1,10 +1,10 @@
+using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -18,7 +18,7 @@ namespace PeriodicTable.Model.DAO
         private GroupBlockDAO GroupBlockDAO = new GroupBlockDAO();
         private StandardStateDAO StandardStateDAO = new StandardStateDAO();
 
-        private Element GetObject(ref SQLiteDataReader dr)
+        private Element GetObject(ref SqliteDataReader dr)
         {
             var element = new Element()
             {
@@ -80,7 +80,16 @@ namespace PeriodicTable.Model.DAO
 
             if (!Convert.IsDBNull(dr["oxidationStates"]))
             {
-                element.OxidationStates = dr["oxidationStates"].ToString();
+                element.OxidationStates = new List<int>();
+                var oxidationStates = dr["oxidationStates"].ToString().Split(',');
+
+                foreach (var oxidationState in oxidationStates)
+                {
+                    if (!string.IsNullOrEmpty(oxidationState))
+                    {
+                        element.OxidationStates.Add(Convert.ToInt32(oxidationState));
+                    }
+                }
             }
 
             if (!Convert.IsDBNull(dr["standardState"]))
@@ -196,7 +205,16 @@ namespace PeriodicTable.Model.DAO
 
             if (data.ContainsKey("oxidationStates"))
             {
-                element.OxidationStates = data["oxidationStates"].ToString();
+                element.OxidationStates = new List<int>();
+                var oxidationStates = data["oxidationStates"].ToString().Split(',');
+
+                foreach (var oxidationState in oxidationStates)
+                {
+                    if (!string.IsNullOrEmpty(oxidationState))
+                    {
+                        element.OxidationStates.Add(Convert.ToInt32(oxidationState));
+                    }
+                }
             }
 
             if (data.ContainsKey("standardState"))
@@ -272,7 +290,7 @@ namespace PeriodicTable.Model.DAO
                 element.GroupBlock.Id,
                 element.IonRadius,
                 element.IonizationEnergy,
-                element.OxidationStates,
+                string.Join(", ", element.OxidationStates),
                 element.StandardState.Id,
                 element.VanDerWaalsRadius,
                 element.YearDiscovered
@@ -358,9 +376,9 @@ namespace PeriodicTable.Model.DAO
             Element element = null;
             var sql = "SELECT * " +
                         "FROM element " +
-                        "WHERE symbol = @1 " +
-                          "OR name = @1";
-            var dr = con.Select(sql, new List<object> { symbol });
+                        "WHERE UPPER(symbol) = @1 " +
+                          "OR UPPER(name) = @1";
+            var dr = con.Select(sql, new List<object> { symbol.ToUpper() });
             if (dr.HasRows)
             {
                 dr.Read();

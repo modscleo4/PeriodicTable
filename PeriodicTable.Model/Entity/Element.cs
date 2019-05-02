@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace PeriodicTable.Model.Entity
 {
     public class Element
@@ -16,7 +18,7 @@ namespace PeriodicTable.Model.Entity
         public GroupBlock GroupBlock { get; set; }
         public string IonRadius { get; set; }
         public decimal? IonizationEnergy { get; set; }
-        public string OxidationStates { get; set; }
+        public List<int> OxidationStates { get; set; }
         public StandardState StandardState { get; set; }
         public decimal? VanDerWaalsRadius { get; set; }
         public int? YearDiscovered { get; set; }

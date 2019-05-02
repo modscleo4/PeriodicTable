@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.Threading.Tasks;
 
 namespace PeriodicTable.Model.Database
@@ -19,7 +19,7 @@ namespace PeriodicTable.Model.Database
         /// <summary>
         /// Atributo interno da conexão com o banco
         /// </summary>
-        private SQLiteConnection con;
+        private SqliteConnection con;
 
         /// <summary>
         /// Cria um novo objeto Connection
@@ -37,7 +37,7 @@ namespace PeriodicTable.Model.Database
         {
             try
             {
-                con = new SQLiteConnection(connectionString);
+                con = new SqliteConnection(connectionString);
                 con.Open();
             }
             catch
@@ -69,7 +69,7 @@ namespace PeriodicTable.Model.Database
 
                 sql = sql.Trim();
 
-                var cmd = new SQLiteCommand(sql, con);
+                var cmd = new SqliteCommand(sql, con);
                 var r = cmd.ExecuteNonQuery();
 
                 Close();
@@ -96,11 +96,11 @@ namespace PeriodicTable.Model.Database
 
                 sql = sql.Trim();
 
-                var cmd = new SQLiteCommand(sql, con);
+                var cmd = new SqliteCommand(sql, con);
                 var i = 1;
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
+                    cmd.Parameters.AddWithValue($"@{i++}", parameter ?? DBNull.Value);
                 }
                 var r = cmd.ExecuteNonQuery();
 
@@ -153,7 +153,7 @@ namespace PeriodicTable.Model.Database
         /// </summary>
         /// <param name="sql">O comando SQL</param>
         /// <returns>Retorna os dados selecionados</returns>
-        public SQLiteDataReader Select(string sql)
+        public SqliteDataReader Select(string sql)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace PeriodicTable.Model.Database
 
                 sql = sql.Trim();
 
-                var cmd = new SQLiteCommand(sql, con);
+                var cmd = new SqliteCommand(sql, con);
                 return cmd.ExecuteReader(CommandBehavior.CloseConnection);
             }
             catch
@@ -176,7 +176,7 @@ namespace PeriodicTable.Model.Database
         /// <param name="sql">O comando SQL</param>
         /// <param name="parameters">Os parâmetros do comando</param>
         /// <returns>Retorna os dados selecionados</returns>
-        public SQLiteDataReader Select(string sql, List<object> parameters)
+        public SqliteDataReader Select(string sql, List<object> parameters)
         {
             try
             {
@@ -184,11 +184,11 @@ namespace PeriodicTable.Model.Database
 
                 sql = sql.Trim();
 
-                var cmd = new SQLiteCommand(sql, con);
+                var cmd = new SqliteCommand(sql, con);
                 var i = 1;
                 foreach (var parameter in parameters)
                 {
-                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
+                    cmd.Parameters.AddWithValue($"@{i++}", parameter ?? DBNull.Value);
                 }
                 return cmd.ExecuteReader(CommandBehavior.CloseConnection);
             }
@@ -203,9 +203,9 @@ namespace PeriodicTable.Model.Database
         /// </summary>
         /// <param name="sql">O comando SQL</param>
         /// <returns>Retorna os dados selecionados</returns>
-        public Task<SQLiteDataReader> SelectAsync(string sql)
+        public Task<SqliteDataReader> SelectAsync(string sql)
         {
-            var tcs = new TaskCompletionSource<SQLiteDataReader>();
+            var tcs = new TaskCompletionSource<SqliteDataReader>();
             Task.Run(() =>
             {
                 var r = Select(sql);
@@ -221,9 +221,9 @@ namespace PeriodicTable.Model.Database
         /// <param name="sql">O comando SQL</param>
         /// <param name="parameters">Os parâmetros do comando</param>
         /// <returns>Retorna os dados selecionados</returns>
-        public Task<SQLiteDataReader> SelectAsync(string sql, List<object> parameters)
+        public Task<SqliteDataReader> SelectAsync(string sql, List<object> parameters)
         {
-            var tcs = new TaskCompletionSource<SQLiteDataReader>();
+            var tcs = new TaskCompletionSource<SqliteDataReader>();
             Task.Run(() =>
             {
                 var r = Select(sql, parameters);
@@ -231,170 +231,6 @@ namespace PeriodicTable.Model.Database
             });
 
             return tcs.Task;
-        }
-
-        /// <summary>
-        /// Obtém um DataTable
-        /// </summary>
-        /// <param name="sql">O comando SQL</param>
-        /// <returns>Retorna um DataTable com os dados selecionados</returns>
-        public DataTable SelectDataTable(string sql)
-        {
-            try
-            {
-                Open();
-
-                sql = sql.Trim();
-
-                var dt = new DataTable();
-                var cmd = new SQLiteCommand(sql, con);
-                var da = new SQLiteDataAdapter(cmd);
-                da.Fill(dt);
-
-                Close();
-                return dt;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Obtém um DataTable (com parâmetros)
-        /// </summary>
-        /// <param name="sql">O comando SQL</param>
-        /// <returns>Retorna um DataTable com os dados selecionados</returns>
-        public DataTable SelectDataTable(string sql, List<object> parameters)
-        {
-            try
-            {
-                Open();
-
-                sql = sql.Trim();
-
-                var dt = new DataTable();
-                var cmd = new SQLiteCommand(sql, con);
-                var i = 1;
-                foreach (var parameter in parameters)
-                {
-                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
-                }
-
-                var da = new SQLiteDataAdapter(cmd);
-                da.Fill(dt);
-
-                Close();
-                return dt;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Obtém um DataSet
-        /// </summary>
-        /// <param name="sql">O comando SQL</param>
-        /// <returns>Retorna um DataSet com os dados</returns>
-        public DataSet SelectDataSet(string sql)
-        {
-            try
-            {
-                Open();
-
-                sql = sql.Trim();
-
-                var ds = new DataSet();
-                var cmd = new SQLiteCommand(sql, con);
-                var da = new SQLiteDataAdapter(cmd);
-                da.Fill(ds);
-
-                Close();
-                return ds;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Obtém um DataSet (com parâmetros)
-        /// </summary>
-        /// <param name="sql">O comando SQL</param>
-        /// <returns>Retorna um DataSet com os dados</returns>
-        public DataSet SelectDataSet(string sql, List<object> parameters)
-        {
-            try
-            {
-                Open();
-
-                sql = sql.Trim();
-
-                var ds = new DataSet();
-                var cmd = new SQLiteCommand(sql, con);
-                var i = 1;
-                foreach (var parameter in parameters)
-                {
-                    cmd.Parameters.AddWithValue($"@{i++}", parameter);
-                }
-
-                var da = new SQLiteDataAdapter(cmd);
-                da.Fill(ds);
-
-                Close();
-                return ds;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Obtém um DataSet (SQL dividido em argumentos)
-        /// </summary>
-        /// <param name="table">Nome da tabela</param>
-        /// <param name="fields">Todos os campos (separados por vírgula)</param>
-        /// <param name="where">Condição (opcional)</param>
-        /// <param name="orderBy">Ordenação (opcional)</param>
-        /// <returns>Retorna um DataSet com os dados</returns>
-        public DataSet SelectDataSet(string table, string fields, string where = "", string orderBy = "")
-        {
-            try
-            {
-                Open();
-
-                table = table.Trim();
-                fields = fields.Trim();
-                where = where.Trim();
-                orderBy = orderBy.Trim();
-
-                var ds = new DataSet();
-                var sql = $"SELECT {fields} FROM {table} ";
-                if (where != "")
-                {
-                    sql = $"{sql} WHERE {where} ";
-                }
-
-                if (orderBy != "")
-                {
-                    sql = $"{sql} ORDER BY {orderBy} ";
-                }
-
-                var cmd = new SQLiteCommand(sql, con);
-                var da = new SQLiteDataAdapter(cmd);
-                da.Fill(ds, table);
-
-                Close();
-                return ds;
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         /// <summary>

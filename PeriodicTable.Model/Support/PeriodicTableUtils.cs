@@ -11,12 +11,9 @@ namespace PeriodicTable.Model.Support
         {
             var count = 2U;
 
-            if (period > 1)
+            for (var i = 1U; i <= period / 2; i++)
             {
-                for (var i = 1U; i <= period / 2; i++)
-                {
-                    count += (2 + i * 4);
-                }
+                count += (2 + i * 4);
             }
 
             return count;
@@ -26,7 +23,7 @@ namespace PeriodicTable.Model.Support
         /// Gets the last element of some period
         /// </summary>
         /// <param name="period">The period</param>
-        /// <returns>Returns the last element of the period(2, 10, 18, 36...)</returns>
+        /// <returns>Returns the last element of the period (2, 10, 18, 36...)</returns>
         public uint GetLastOfPeriod(uint period)
         {
             var last = 0U;
