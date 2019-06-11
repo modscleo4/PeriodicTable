@@ -60,8 +60,6 @@ namespace PeriodicTable.WPF
 
             ElementBorder.BorderBrush = new SolidColorBrush(Color.FromArgb(element.GroupBlock.Color.A, element.GroupBlock.Color.R, element.GroupBlock.Color.G, element.GroupBlock.Color.B));
 
-            //LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
-            //LabelFreeElectrons.Text = $"{PeriodicTableUtils.GetFreeElectrons(element.AtomicNumber)}";
             LabelElectronicDistribution.Text = PeriodicTableUtils.GetElectronsPerLevel(element.AtomicNumber);
 
             Title = $"{(element.Name ?? "Element")} - Periodic Table";
