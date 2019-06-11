@@ -1,7 +1,7 @@
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.Data.Sqlite;
 using System.Threading.Tasks;
 
 namespace PeriodicTable.Model.Database

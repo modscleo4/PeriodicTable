@@ -39,8 +39,7 @@ namespace PeriodicTable.WPF
                 var column = PeriodicTableUtils.GetGroup(element.AtomicNumber);
                 var row = PeriodicTableUtils.GetPeriod(element.AtomicNumber);
 
-                if ((row == 1 && column >= 2) ||
-                    (row <= 5 && column > 2))
+                if ((row == 1 && column >= 2) || (row <= 5 && column > 2))
                 {
                     column += rowLock - PeriodicTableUtils.GetPeriodMaxE(row);
                 }

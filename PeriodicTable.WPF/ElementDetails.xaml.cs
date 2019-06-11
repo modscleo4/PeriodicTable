@@ -3,7 +3,6 @@ using PeriodicTable.Model.Entity;
 using PeriodicTable.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 
@@ -61,7 +60,10 @@ namespace PeriodicTable.WPF
 
             ElementBorder.BorderBrush = new SolidColorBrush(Color.FromArgb(element.GroupBlock.Color.A, element.GroupBlock.Color.R, element.GroupBlock.Color.G, element.GroupBlock.Color.B));
 
-            LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
+            //LabelGP.Text = $"{PeriodicTableUtils.GetPeriod(element.AtomicNumber)}, {PeriodicTableUtils.GetGroup(element.AtomicNumber)}";
+            //LabelFreeElectrons.Text = $"{PeriodicTableUtils.GetFreeElectrons(element.AtomicNumber)}";
+            LabelElectronicDistribution.Text = PeriodicTableUtils.GetElectronsPerLevel(element.AtomicNumber);
+
             Title = $"{(element.Name ?? "Element")} - Periodic Table";
 
             LabelNumber.Text = element.AtomicNumber.ToString();
@@ -111,16 +113,7 @@ namespace PeriodicTable.WPF
             if (element.ElectronicConfiguration != null)
             {
                 LabelElectronicConfiguration.Text = element.ElectronicConfiguration;
-
-                string electronicConfiguration = element.ElectronicConfiguration;
-
-                while (Regex.Match(electronicConfiguration, @"\[.*\]").Success)
-                {
-                    var e = ElementDAO.Select(Regex.Replace(electronicConfiguration, @"^.*\[(.*)\].*$", @"$1"));
-                    electronicConfiguration = Regex.Replace(electronicConfiguration, @"(\[(.*)\])", e.ElectronicConfiguration);
-                }
-
-                LabelElectronicConfiguration.ToolTip = electronicConfiguration;
+                LabelElectronicConfiguration.ToolTip = string.Join(" ", PeriodicTableUtils.APIElectronicDistribution(element.AtomicNumber));
             }
 
             if (element.GroupBlock != null)
@@ -173,7 +166,7 @@ namespace PeriodicTable.WPF
         {
             Title = "Element - Periodic Table";
 
-            LabelGP.Text = "P, G";
+            LabelElectronicDistribution.Text = "0";
 
             LabelNumber.Text = "Number";
             LabelSymbol.Text = "Symbol";

@@ -8,7 +8,7 @@ namespace PeriodicTable.Model.Database
     /// </summary>
     public static class DB
     {
-        private static string home = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private static string home = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         private static string dataSource = Path.Combine(home, "PeriodicTable.db");
 
