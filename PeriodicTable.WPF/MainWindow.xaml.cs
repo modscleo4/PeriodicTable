@@ -12,28 +12,25 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class MainWindow : Modscleo4.WPFUI.Controls.Window
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-        private readonly PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
-
-        private readonly uint rowLock;
+        private readonly uint rowLock = PeriodicTableUtils.GetPeriodMaxE(5);
 
         public MainWindow()
         {
-            rowLock = PeriodicTableUtils.GetPeriodMaxE(5);
-
             InitializeComponent();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var elements = await ElementDAO.SelectAsync();
+
             foreach (var element in elements)
             {
                 var gridElement = new GridElement
                 {
                     AtomicNumber = element.AtomicNumber.ToString(),
                     Symbol = element.Symbol,
-                    BorderBrush = new SolidColorBrush(Color.FromArgb(element.GroupBlock.Color.A, element.GroupBlock.Color.R, element.GroupBlock.Color.G, element.GroupBlock.Color.B))
+                    BorderBrush = new SolidColorBrush(Color.FromArgb(element.GroupBlock.Color.A, element.GroupBlock.Color.R, element.GroupBlock.Color.G, element.GroupBlock.Color.B)),
+                    Clickable = true
                 };
 
                 var column = PeriodicTableUtils.GetGroup(element.AtomicNumber);
@@ -47,13 +44,13 @@ namespace PeriodicTable.WPF
                 {
                     if (column < rowLock)
                     {
-                        // Lanthanoids/actinoids are at row 8
+                        // Lanthanoid/actinoid are at row 8
                         row += 3;
                         column++;
                     }
                     else
                     {
-                        // Bring the elements 14 columns back (removed all the lanthanoids/actinoids)
+                        // Bring the elements 14 columns back (removed all the lanthanoid/actinoid)
                         column -= 14;
                     }
                 }

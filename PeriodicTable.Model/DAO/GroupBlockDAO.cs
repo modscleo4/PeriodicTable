@@ -9,9 +9,9 @@ using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
 {
-    public class GroupBlockDAO
+    public static class GroupBlockDAO
     {
-        private GroupBlock GetObject(ref SqliteDataReader dr)
+        private static GroupBlock GetObject(ref SqliteDataReader dr)
         {
             var groupBlock = new GroupBlock()
             {
@@ -64,43 +64,16 @@ namespace PeriodicTable.Model.DAO
                 case "Actinoid":
                     groupBlock.Color = Color.FromArgb(255, 255, 153, 204);
                     break;
+
+                default:
+                    groupBlock.Color = Color.FromArgb(255, 32, 32, 32);
+                    break;
             }
 
             return groupBlock;
         }
 
-        public GroupBlock Save(string name)
-        {
-            name = Common.ToTitleCase(name);
-
-            var sql = "INSERT INTO groupBlock " +
-                          "(name)" +
-                        "VALUES " +
-                          "(@1);" +
-
-                          "SELECT last_insert_rowid() AS id";
-
-            var dr = con.Select(sql, new List<object> { name });
-            dr.Read();
-            var id = Convert.ToInt64(dr["id"]);
-            dr.Close();
-
-            return Select(id);
-        }
-
-        public Task<GroupBlock> SaveAsync(string name)
-        {
-            var tcs = new TaskCompletionSource<GroupBlock>();
-            Task.Run(() =>
-            {
-                var r = Save(name);
-                tcs.SetResult(r);
-            });
-
-            return tcs.Task;
-        }
-
-        public GroupBlock Select(long id)
+        public static GroupBlock Select(long id)
         {
             GroupBlock groupBlock = null;
             var sql = "SELECT rowid, * " +
@@ -118,7 +91,7 @@ namespace PeriodicTable.Model.DAO
             return groupBlock;
         }
 
-        public GroupBlock Select(string name)
+        public static GroupBlock Select(string name)
         {
             GroupBlock groupBlock;
             name = Common.ToTitleCase(name);
@@ -135,13 +108,14 @@ namespace PeriodicTable.Model.DAO
             }
             else
             {
-                groupBlock = Save(name);
+                groupBlock = new GroupBlock() { Name = name };
+                groupBlock.Save();
             }
 
             return groupBlock;
         }
 
-        public Task<GroupBlock> SelectAsync(long id)
+        public static Task<GroupBlock> SelectAsync(long id)
         {
             var tcs = new TaskCompletionSource<GroupBlock>();
             Task.Run(() =>
@@ -153,7 +127,7 @@ namespace PeriodicTable.Model.DAO
             return tcs.Task;
         }
 
-        public Task<GroupBlock> SelectAsync(string name)
+        public static Task<GroupBlock> SelectAsync(string name)
         {
             var tcs = new TaskCompletionSource<GroupBlock>();
             Task.Run(() =>

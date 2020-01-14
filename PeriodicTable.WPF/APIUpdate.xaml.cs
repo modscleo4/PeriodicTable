@@ -11,8 +11,6 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class APIUpdate : Modscleo4.WPFUI.Controls.Window
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-
         public APIUpdate()
         {
             InitializeComponent();
@@ -31,13 +29,11 @@ namespace PeriodicTable.WPF
                 {
                     if (percent == -1)
                     {
-                        // Checking API
                         UpdateProgressBar.IsIndeterminate = true;
                         LabelStatus.Content = "Checking API status";
                     }
                     else
                     {
-                        // Updating cache
                         UpdateProgressBar.IsIndeterminate = false;
                         LabelStatus.Content = "Updating cache";
                         UpdateProgressBar.Value = percent;

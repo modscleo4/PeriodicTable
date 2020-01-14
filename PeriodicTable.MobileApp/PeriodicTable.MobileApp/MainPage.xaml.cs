@@ -16,8 +16,7 @@ namespace PeriodicTable.MobileApp
     [DesignTimeVisible(true)]
     public partial class MainPage : ContentPage
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-        private readonly PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
+        private readonly uint rowLock = PeriodicTableUtils.GetPeriodMaxE(5);
 
         public MainPage()
         {
@@ -40,60 +39,22 @@ namespace PeriodicTable.MobileApp
                 var column = PeriodicTableUtils.GetGroup(element.AtomicNumber);
                 var row = PeriodicTableUtils.GetPeriod(element.AtomicNumber);
 
-                if (row == 1)
+                if ((row == 1 && column >= 2) || (row <= 5 && column > 2))
                 {
-                    if (column == 2)
-                    {
-                        column = PeriodicTableUtils.GetPeriodMaxE(4);
-                    }
+                    column += rowLock - PeriodicTableUtils.GetPeriodMaxE(row);
                 }
-                else if (row == 2)
+                else if (column > 2)
                 {
-                    if (column > 2)
+                    if (column < rowLock)
                     {
-                        column += PeriodicTableUtils.GetPeriodMaxE(4) - PeriodicTableUtils.GetPeriodMaxE(row);
+                        // Lanthanoid/actinoid are at row 8
+                        row += 3;
+                        column++;
                     }
-                }
-                else if (row == 3)
-                {
-                    if (column > 2)
+                    else
                     {
-                        column += PeriodicTableUtils.GetPeriodMaxE(4) - PeriodicTableUtils.GetPeriodMaxE(row);
-                    }
-                }
-                else if (row == 6)
-                {
-                    if (column > 2)
-                    {
-                        if (column < PeriodicTableUtils.GetPeriodMaxE(5))
-                        {
-                            // Lanthanoids is at row 8
-                            row += 3;
-                            column += 1;
-                        }
-                        else
-                        {
-                            // Bring the elements 14 columns back (removed all the lanthanoids)
-                            column -= 14;
-                        }
-                    }
-                }
-                else if (row == 7)
-                {
-                    if (column > 2)
-                    {
-                        // Actinoids start at column 3 (2 in the grid)
-                        if (column < PeriodicTableUtils.GetPeriodMaxE(5))
-                        {
-                            // Actinoids is at row 9
-                            row += 3;
-                            column += 1;
-                        }
-                        else
-                        {
-                            // Bring the elements 14 columns back (removed all the actinoids)
-                            column -= 14;
-                        }
+                        // Bring the elements 14 columns back (removed all the lanthanoid/actinoid)
+                        column -= 14;
                     }
                 }
 

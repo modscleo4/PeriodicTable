@@ -26,8 +26,6 @@ namespace PeriodicTable.UWP
     /// </summary>
     public sealed partial class APIUpdate : Page
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-
         public APIUpdate()
         {
             this.InitializeComponent();
@@ -41,13 +39,11 @@ namespace PeriodicTable.UWP
                 {
                     if (percent == -1)
                     {
-                        // Checking API
                         UpdateProgressBar.IsIndeterminate = true;
                         LabelStatus.Text = "Checking API status";
                     }
                     else
                     {
-                        // Updating cache
                         UpdateProgressBar.IsIndeterminate = false;
                         LabelStatus.Text = "Updating cache";
                         UpdateProgressBar.Value = percent;

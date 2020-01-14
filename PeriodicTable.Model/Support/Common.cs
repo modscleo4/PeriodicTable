@@ -15,7 +15,7 @@ namespace PeriodicTable.Model.Support
         {
             HttpWebResponse response = null;
             var request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "HEAD";
+            request.Method = "GET";
 
             var ret = true;
 

@@ -5,16 +5,14 @@ using System.Text.RegularExpressions;
 
 namespace PeriodicTable.Model.Support
 {
-    public class PeriodicTableUtils
+    public static class PeriodicTableUtils
     {
-        private ElementDAO ElementDAO = new ElementDAO();
-
         /// <summary>
         /// Get the max eletrons of some period
         /// </summary>
         /// <param name="period">The period</param>
         /// <returns>Returns the max eletrons of the period (2, 8, 18, 32, ...)</returns>
-        public uint GetPeriodMaxE(uint period)
+        public static uint GetPeriodMaxE(uint period)
         {
             var count = 2U;
 
@@ -31,7 +29,7 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="period">The period</param>
         /// <returns>Returns the last element of the period (2, 10, 18, 36...)</returns>
-        public uint GetLastOfPeriod(uint period)
+        public static uint GetLastOfPeriod(uint period)
         {
             var last = 0U;
             for (var i = 1U; i <= period; i++)
@@ -47,7 +45,7 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="numberOfElectrons">The number of electrons (or the number of protons)</param>
         /// <returns>Returns the group of the element</returns>
-        public uint GetGroup(uint numberOfElectrons)
+        public static uint GetGroup(uint numberOfElectrons)
         {
             var group = numberOfElectrons;
             var period = GetPeriod(numberOfElectrons);
@@ -62,7 +60,7 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="numberOfElectrons">The number of electrons (or the number of protons)</param>
         /// <returns>Returns the period of the element</returns>
-        public uint GetPeriod(uint numberOfElectrons)
+        public static uint GetPeriod(uint numberOfElectrons)
         {
             var period = 1U;
             var numE = (int)numberOfElectrons;
@@ -86,17 +84,17 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="numberOfElectrons">The number of electrons (or the number of protons)</param>
         /// <returns>Returns a List<string> with the electronic distribution</returns>
-        public List<string> ElectronicDistribution(uint numberOfElectrons)
+        public static List<string> ElectronicDistribution(uint numberOfElectrons)
         {
             var ret = new List<string>();
 
-            var a = false;
+            string[] sublevels = { "s", "p", "d", "f", "g" };
 
             var lastRow = 0;
             var row = 0;
             var col = 0;
 
-            string letter;
+            var incLastRow = false;
 
             while (col >= 0)
             {
@@ -107,21 +105,20 @@ namespace PeriodicTable.Model.Support
                 else
                 {
                     numberOfElectrons -= (uint)(2 + col * 4);
-                    letter = (col == 0) ? "s" : (col == 1) ? "p" : (col == 2) ? "d" : "f";
-                    ret.Add($"{row + 1}{letter}{2 + col * 4}");
+                    ret.Add($"{row + 1}{sublevels[col]}{2 + col * 4}");
                 }
 
                 if (col == 0)
                 {
                     row = lastRow;
 
-                    if (a)
+                    if (incLastRow)
                     {
                         lastRow++;
                     }
 
                     col = lastRow;
-                    a = !a;
+                    incLastRow = !incLastRow;
                 }
                 else
                 {
@@ -133,8 +130,7 @@ namespace PeriodicTable.Model.Support
 
             if (numberOfElectrons > 0)
             {
-                letter = (col == 0) ? "s" : (col == 1) ? "p" : (col == 2) ? "d" : "f";
-                ret.Add($"{row + 1}{letter}{numberOfElectrons}");
+                ret.Add($"{row + 1}{sublevels[col]}{numberOfElectrons}");
             }
 
             return ret;
@@ -145,10 +141,11 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="numberOfElectrons">The number of electrons (or the number of protons)</param>
         /// <returns>Returns the electronic distribution</returns>
-        public List<string> APIElectronicDistribution(uint numberOfElectrons)
+        public static List<string> APIElectronicDistribution(uint numberOfElectrons)
         {
             var ret = new List<string>();
             var electronicConfiguration = ElementDAO.Select((int)numberOfElectrons).ElectronicConfiguration;
+
             while (Regex.Match(electronicConfiguration, @"\[.*\]").Success)
             {
                 var e = ElementDAO.Select(Regex.Replace(electronicConfiguration, @"^.*\[(.*)\].*$", @"$1"));
@@ -168,7 +165,7 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="numberOfElectrons">The number of electrons (or the number of protons)</param>
         /// <returns>Returns a unsigned integer with the amount of available electrons</returns>
-        public uint GetFreeElectrons(uint numberOfElectrons)
+        public static uint GetFreeElectrons(uint numberOfElectrons)
         {
             var distribution = APIElectronicDistribution(numberOfElectrons);
             distribution.Sort();
@@ -177,7 +174,7 @@ namespace PeriodicTable.Model.Support
             var s = 0U;
             foreach (var str in distribution)
             {
-                var num = Convert.ToUInt32(Regex.Replace(str, "[0-9][s, p, d, f](.*)", "$1"));
+                var num = Convert.ToUInt32(Regex.Replace(str, "[0-9][s, p, d, f, g](.*)", "$1"));
                 s += num;
             }
 
@@ -189,7 +186,7 @@ namespace PeriodicTable.Model.Support
         /// </summary>
         /// <param name="numberOfElectrons">The number of electrons (or the number of protons)</param>
         /// <returns>Returns a string with the amount of electrons per level</returns>
-        public string GetElectronsPerLevel(uint numberOfElectrons)
+        public static string GetElectronsPerLevel(uint numberOfElectrons)
         {
             var distribution = APIElectronicDistribution(numberOfElectrons);
             distribution.Sort();
@@ -202,7 +199,7 @@ namespace PeriodicTable.Model.Support
 
                 foreach (var s in dist)
                 {
-                    var num = Convert.ToUInt32(Regex.Replace(s, "[0-9][s, p, d, f](.*)", "$1"));
+                    var num = Convert.ToUInt32(Regex.Replace(s, "[0-9][s, p, d, f, g](.*)", "$1"));
                     sum += num;
                 }
 

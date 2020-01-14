@@ -14,15 +14,10 @@ namespace PeriodicTable.UWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-        private readonly PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
-
-        private readonly uint rowLock;
+        private readonly uint rowLock = PeriodicTableUtils.GetPeriodMaxE(5);
 
         public MainPage()
         {
-            rowLock = PeriodicTableUtils.GetPeriodMaxE(5);
-
             this.InitializeComponent();
         }
 
@@ -50,13 +45,13 @@ namespace PeriodicTable.UWP
                 {
                     if (column < rowLock)
                     {
-                        // Lanthanoids/actinoids are at row 8
+                        // Lanthanoid/actinoid are at row 8
                         row += 3;
                         column++;
                     }
                     else
                     {
-                        // Bring the elements 14 columns back (removed all the lanthanoids/actinoids)
+                        // Bring the elements 14 columns back (removed all the lanthanoid/actinoid)
                         column -= 14;
                     }
                 }

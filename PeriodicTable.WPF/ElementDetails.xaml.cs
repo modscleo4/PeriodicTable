@@ -13,9 +13,6 @@ namespace PeriodicTable.WPF
     /// </summary>
     public partial class ElementDetails : Modscleo4.WPFUI.Controls.Window
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-        private readonly PeriodicTableUtils PeriodicTableUtils = new PeriodicTableUtils();
-
         public ElementDetails()
         {
             InitializeComponent();

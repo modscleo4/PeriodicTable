@@ -14,8 +14,6 @@ namespace PeriodicTable.MobileApp
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class APIUpdate : ContentPage
     {
-        private readonly ElementDAO ElementDAO = new ElementDAO();
-
         public APIUpdate()
         {
             InitializeComponent();

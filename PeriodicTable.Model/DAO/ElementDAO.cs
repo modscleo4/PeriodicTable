@@ -13,12 +13,9 @@ using static PeriodicTable.Model.Database.DB;
 
 namespace PeriodicTable.Model.DAO
 {
-    public class ElementDAO
+    public static class ElementDAO
     {
-        private GroupBlockDAO GroupBlockDAO = new GroupBlockDAO();
-        private StandardStateDAO StandardStateDAO = new StandardStateDAO();
-
-        private Element GetObject(ref SqliteDataReader dr)
+        private static Element GetObject(ref SqliteDataReader dr)
         {
             var element = new Element()
             {
@@ -110,7 +107,7 @@ namespace PeriodicTable.Model.DAO
             return element;
         }
 
-        private Element GetObjectFromJSON(dynamic data)
+        private static Element GetObjectFromJSON(dynamic data)
         {
             if (data.ContainsKey("message"))
             {
@@ -166,7 +163,7 @@ namespace PeriodicTable.Model.DAO
             if (data.ContainsKey("density"))
             {
                 element.Density = string.IsNullOrWhiteSpace(data["density"].ToString()) ? null :
-                    Convert.ToDecimal(data["density"], CultureInfo.InvariantCulture);
+                    decimal.Parse(data["density"].ToString(), NumberStyles.Any, CultureInfo.InvariantCulture);
             }
 
             if (data.ContainsKey("electronAffinity"))
@@ -236,76 +233,7 @@ namespace PeriodicTable.Model.DAO
             return element;
         }
 
-        public void Save(Element element)
-        {
-            var sql = "SELECT * " +
-                        "FROM element " +
-                        "WHERE atomicNumber = @1";
-            var dr = con.Select(sql, new List<object> { element.AtomicNumber });
-
-            if (dr.HasRows)
-            {
-                sql = "UPDATE element SET " +
-                          "symbol = @2, " +
-                          "atomicMass = @3, " +
-                          "name = @4, " +
-                          "atomicRadius = @5, " +
-                          "meltingPoint = @6, " +
-                          "boilingPoint = @7, " +
-                          "density = @8, " +
-                          "electronAffinity = @9, " +
-                          "electronegativity = @10, " +
-                          "electronicConfiguration = @11, " +
-                          "groupBlock = @12, " +
-                          "ionRadius = @13, " +
-                          "ionizationEnergy = @14, " +
-                          "oxidationStates = @15, " +
-                          "standardState = @16, " +
-                          "vanDerWaalsRadius = @17, " +
-                          "yearDiscovered = @18 " +
-                        "WHERE atomicNumber = @1";
-                dr.Close();
-            }
-            else
-            {
-                sql = "INSERT INTO element " +
-                          "(atomicNumber, symbol, atomicMass, name, atomicRadius, meltingPoint, boilingPoint, density, electronAffinity, electronegativity, electronicConfiguration, groupBlock, ionRadius, ionizationEnergy, oxidationStates, standardState, vanDerWaalsRadius, yearDiscovered) " +
-                        "VALUES " +
-                          "(@1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18)";
-            }
-
-            con.Run(sql, new List<object>
-            {
-                element.AtomicNumber,
-                element.Symbol,
-                element.AtomicMass,
-                element.Name,
-                element.AtomicRadius,
-                element.MeltingPoint,
-                element.BoilingPoint,
-                element.Density,
-                element.ElectronAffinity,
-                element.Electronegativity,
-                element.ElectronicConfiguration,
-                element.GroupBlock.Id,
-                element.IonRadius,
-                element.IonizationEnergy,
-                string.Join(", ", element.OxidationStates),
-                element.StandardState.Id,
-                element.VanDerWaalsRadius,
-                element.YearDiscovered
-            });
-        }
-
-        public async Task SaveAsync(Element element)
-        {
-            await Task.Run(() =>
-            {
-                Save(element);
-            });
-        }
-
-        public async Task UpdateFromAPI(IProgress<int> progress = null)
+        public static async Task UpdateFromAPI(IProgress<int> progress = null)
         {
             var url = $"https://neelpatel05.pythonanywhere.com/";
             var webClient = new WebClient();
@@ -324,7 +252,7 @@ namespace PeriodicTable.Model.DAO
                 foreach (dynamic innerData in data)
                 {
                     Element element = await Task.Run(() => GetObjectFromJSON(innerData));
-                    await SaveAsync(element);
+                    await element.SaveAsync();
 
                     if (progress != null)
                     {
@@ -339,7 +267,7 @@ namespace PeriodicTable.Model.DAO
             }
         }
 
-        public List<Element> Select()
+        public static List<Element> Select()
         {
             var elements = new List<Element>();
             var sql = "SELECT * " +
@@ -354,7 +282,7 @@ namespace PeriodicTable.Model.DAO
             return elements;
         }
 
-        public Element Select(int atomicNumber)
+        public static Element Select(int atomicNumber)
         {
             Element element = null;
             var sql = "SELECT * " +
@@ -371,7 +299,7 @@ namespace PeriodicTable.Model.DAO
             return element;
         }
 
-        public Element Select(string symbol)
+        public static Element Select(string symbol)
         {
             Element element = null;
             var sql = "SELECT * " +
@@ -389,7 +317,7 @@ namespace PeriodicTable.Model.DAO
             return element;
         }
 
-        public Task<List<Element>> SelectAsync()
+        public static Task<List<Element>> SelectAsync()
         {
             var tcs = new TaskCompletionSource<List<Element>>();
             Task.Run(() =>
@@ -401,7 +329,7 @@ namespace PeriodicTable.Model.DAO
             return tcs.Task;
         }
 
-        public Task<Element> SelectAsync(int atomicNumber)
+        public static Task<Element> SelectAsync(int atomicNumber)
         {
             var tcs = new TaskCompletionSource<Element>();
             Task.Run(() =>
@@ -413,7 +341,7 @@ namespace PeriodicTable.Model.DAO
             return tcs.Task;
         }
 
-        public Task<Element> SelectAsync(string symbol)
+        public static Task<Element> SelectAsync(string symbol)
         {
             var tcs = new TaskCompletionSource<Element>();
             Task.Run(() =>

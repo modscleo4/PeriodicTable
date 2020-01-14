@@ -37,6 +37,11 @@ namespace PeriodicTable.WPF.Controls
             }
         }
 
+        public bool Clickable
+        {
+            get; set;
+        }
+
         #endregion Properties
 
         #region Events
@@ -72,7 +77,10 @@ namespace PeriodicTable.WPF.Controls
 
         private void GridElement_Click(object sender, RoutedEventArgs e)
         {
-            new ElementDetails(Convert.ToInt32(AtomicNumber)).ShowDialog();
+            if (Clickable)
+            {
+                new ElementDetails(Convert.ToInt32(AtomicNumber)).ShowDialog();
+            }
         }
 
         static GridElement()
